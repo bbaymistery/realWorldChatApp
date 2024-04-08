@@ -78,38 +78,11 @@ const ChatHeader = () => {
   };
 
   return (
-    <Box
-      p={2}
-      width={"100%"}
-      sx={{
-        backgroundColor:
-          theme.palette.mode === "light" ? "#F8FAFF" : theme.palette.background,
-        boxShadow: "0px 0px 2px rgba(0, 0, 0, 0.25)",
-      }}
-    >
-      <Stack
-        alignItems={"center"}
-        direction={"row"}
-        sx={{ width: "100%", height: "100%" }}
-        justifyContent="space-between"
-      >
-        <Stack
-          onClick={() => {
-            searchParams.set("open", true);
-            setSearchParams(searchParams);
-          }}
-          spacing={2}
-          direction="row"
-        >
+    <Box p={2} width={"100%"} sx={{ backgroundColor: theme.palette.mode === "light" ? "#F8FAFF" : theme.palette.background, boxShadow: "0px 0px 2px rgba(0, 0, 0, 0.25)", }} >
+      <Stack alignItems={"center"} direction={"row"} sx={{ width: "100%", height: "100%" }} justifyContent="space-between" >
+        <Stack onClick={() => { searchParams.set("open", true); setSearchParams(searchParams); }} spacing={2} direction="row"  >
           <Box>
-            <StyledBadge
-              overlap="circular"
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              variant="dot"
-            >
+            <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right", }} variant="dot"    >
               <Avatar alt={faker.name.fullName()} src={faker.image.avatar()} />
             </StyledBadge>
           </Box>
@@ -132,15 +105,7 @@ const ChatHeader = () => {
           )}
 
           <Divider orientation="vertical" flexItem />
-          <IconButton
-            id="conversation-positioned-button"
-            aria-controls={
-              openConversationMenu ? "conversation-positioned-menu" : undefined
-            }
-            aria-haspopup="true"
-            aria-expanded={openConversationMenu ? "true" : undefined}
-            onClick={handleClickConversationMenu}
-          >
+          <IconButton id="conversation-positioned-button" aria-controls={openConversationMenu ? "conversation-positioned-menu" : undefined} aria-haspopup="true" aria-expanded={openConversationMenu ? "true" : undefined} onClick={handleClickConversationMenu}    >
             <CaretDown />
           </IconButton>
           <Menu
@@ -166,12 +131,7 @@ const ChatHeader = () => {
               <Stack spacing={1}>
                 {Conversation_Menu.map((el) => (
                   <MenuItem onClick={handleCloseConversationMenu}>
-                    <Stack
-                      sx={{ minWidth: 100 }}
-                      direction="row"
-                      alignItems={"center"}
-                      justifyContent="space-between"
-                    >
+                    <Stack sx={{ minWidth: 100 }} direction="row" alignItems={"center"} justifyContent="space-between"  >
                       <span>{el.title}</span>
                     </Stack>{" "}
                   </MenuItem>
