@@ -43,10 +43,12 @@ Scrollbar.propTypes = {
   sx: PropTypes.object,
 };
 
-export default function Scrollbar({ children, sx, ...other }) {
+export default function Scrollbar(props) {
+  let { children, sx, ...other } = props
   const userAgent = typeof navigator === 'undefined' ? 'SSR' : navigator.userAgent;
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  console.log(props);
 
   if (isMobile) {
     return (
@@ -65,4 +67,4 @@ export default function Scrollbar({ children, sx, ...other }) {
   );
 }
 
-export {SimpleBarStyle};
+export { SimpleBarStyle };
