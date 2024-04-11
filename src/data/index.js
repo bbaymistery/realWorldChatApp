@@ -1,13 +1,5 @@
 import { faker } from "@faker-js/faker";
-import {
-  ChatCircleDots,
-  Gear,
-  GearSix,
-  Phone,
-  SignOut,
-  User,
-  Users,
-} from "phosphor-react";
+import { ChatCircleDots, Gear, GearSix, Phone, SignOut, User, Users, } from "phosphor-react";
 
 const Profile_Menu = [
   {
@@ -220,11 +212,4 @@ const Message_options = [
   },
 ];
 
-export {
-  Profile_Menu,
-  Nav_Setting,
-  Nav_Buttons,
-  ChatList,
-  Chat_History,
-  Message_options,
-};
+export { Profile_Menu, Nav_Setting, Nav_Buttons, ChatList, Chat_History, Message_options, };

@@ -49,12 +49,11 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 }));
 const DashboardLayout = () => {
   const theme = useTheme()
-  console.log(theme);
   const [selected, setSelected] = useState(0)
-
   const { onToggleMode } = useSettings()
   return (
-    <>
+    // <>
+    <div style={{ display: 'flex' }}>
       <Box p={2} sx={{ backgroundColor: theme.palette.background.paper, height: "100vh", width: 100, boxShadow: "0px 0px 2px rgba(0,0,0,0.25)" }}>
         <Stack spacing={3} direction={"column"} sx={{ width: "100%", height: "100%" }} alignItems={"center"} justifyContent={"space-between"}>
           <Stack alignItems="center" spacing={4} >
@@ -62,20 +61,20 @@ const DashboardLayout = () => {
               <img src={Logo} alt="Chat App Logo" />
             </Box>
             <Stack sx={{ width: "max-content" }} alignItems={"center"} spacing={3}>
-              {Nav_Buttons.map((el) => (el.index === selected ?
-                <Box sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5, }} p={1}>
+              {Nav_Buttons.map((el, i) => (el.index === selected ?
+                <Box key={i + 10000} sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5, }} p={1}>
                   <IconButton sx={{ width: "max-content", color: 'white' }} key={el.index}>   {el.icon}  </IconButton>
                 </Box> :
-                <IconButton onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} key={el.index}>   {el.icon}  </IconButton>
+                <IconButton key={i + 200} onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} key={el.index}>   {el.icon}  </IconButton>
               ))}
               <Divider sx={{ width: "48px" }} />
 
-              {Nav_Setting.map((el) => (el.index === selected ?
-                <Box sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5, }} p={1}>
+              {Nav_Setting.map((el, i) => (el.index === selected ?
+                <Box key={i + 100} sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5, }} p={1}>
                   <IconButton sx={{ width: "max-content", color: 'white' }} key={el.index}>   {el.icon}  </IconButton>
                 </Box>
                 :
-                <IconButton onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} key={el.index}>   {el.icon}  </IconButton>
+                <IconButton key={i + 1000} onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} key={el.index}>   {el.icon}  </IconButton>
               ))}
 
             </Stack>
@@ -87,9 +86,8 @@ const DashboardLayout = () => {
           </Stack>
         </Stack>
       </Box>
-      Dashboard Layout
       <Outlet />
-    </>
+    </div>
   );
 };
 
