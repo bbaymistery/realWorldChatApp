@@ -65,7 +65,7 @@ const DashboardLayout = () => {
                 <Box key={i + 10000} sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 1.5, }} p={1}>
                   <IconButton sx={{ width: "max-content", color: 'white' }} key={el.index}>   {el.icon}  </IconButton>
                 </Box> :
-                <IconButton key={i + 200} onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} key={el.index}>   {el.icon}  </IconButton>
+                <IconButton key={i + 200} onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} >   {el.icon}  </IconButton>
               ))}
               <Divider sx={{ width: "48px" }} />
 
@@ -74,7 +74,7 @@ const DashboardLayout = () => {
                   <IconButton sx={{ width: "max-content", color: 'white' }} key={el.index}>   {el.icon}  </IconButton>
                 </Box>
                 :
-                <IconButton key={i + 1000} onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} key={el.index}>   {el.icon}  </IconButton>
+                <IconButton key={i + 1000} onClick={() => { setSelected(el.index) }} sx={{ width: "max-content", color: theme.palette.mode === "light" ? "#000" : theme.palette.text.primary }} >   {el.icon}  </IconButton>
               ))}
 
             </Stack>
