@@ -54,15 +54,7 @@ const RootStyle = styled(m.div)(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function SettingsDrawer() {
-  const {
-    themeMode,
-    themeLayout,
-    themeStretch,
-    themeContrast,
-    themeDirection,
-    themeColorPresets,
-    onResetSetting,
-  } = useSettings();
+  const { themeMode, themeLayout, themeStretch, themeContrast, themeDirection, themeColorPresets, onResetSetting, } = useSettings();
 
   const [open, setOpen] = useState(false);
 
@@ -92,33 +84,15 @@ export default function SettingsDrawer() {
 
   return (
     <>
-      <Backdrop
-        open={open}
-        onClick={handleClose}
-        sx={{
-          background: "transparent",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-        }}
-      />
+      <Backdrop open={open} onClick={handleClose} sx={{ background: "transparent", zIndex: (theme) => theme.zIndex.drawer + 1, }} />
 
-      {!open && (
-        <ToggleButton
-          open={open}
-          notDefault={notDefault}
-          onToggle={handleToggle}
-        />
-      )}
+      {!open && (<ToggleButton open={open} notDefault={notDefault} onToggle={handleToggle} />)}
 
       <AnimatePresence>
         {open && (
           <>
             <RootStyle>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ py: 2, pr: 1, pl: 2.5 }}
-              >
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 2, pr: 1, pl: 2.5 }} >
                 <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>
                   Settings
                 </Typography>
@@ -133,22 +107,24 @@ export default function SettingsDrawer() {
               </Stack>
 
               <Divider sx={{ borderStyle: "dashed" }} />
-
-              <Scrollbar sx={{ flexGrow: 1 }}>
-                <Stack spacing={3} sx={{ p: 3 }}>
-                  <Stack spacing={1.5}>
-                    <Typography variant="subtitle2">Direction</Typography>
-                    <SettingDirection />
-                  </Stack>
-
-                  <Stack spacing={1.5}>
-                    <Typography variant="subtitle2">Presets</Typography>
-                    <SettingColorPresets />
-                  </Stack>
-
-                  <SettingFullscreen />
+              {/* //Sol terefdeki renglerin componenti 
+scrollbari kapatdim cunkiiii Goruntude sixinti yaranir 
+*/}
+              {/* <Scrollbar sx={{ flexGrow: 1, overflow: "hidden" }}> */}
+              <Stack spacing={3} sx={{ p: 3 }}>
+                <Stack spacing={1.5}>
+                  <Typography variant="subtitle2">Direction</Typography>
+                  <SettingDirection />
                 </Stack>
-              </Scrollbar>
+
+                <Stack spacing={1.5}>
+                  <Typography variant="subtitle2">Presets</Typography>
+                  <SettingColorPresets />
+                </Stack>
+
+                <SettingFullscreen />
+              </Stack>
+              {/* </Scrollbar> */}
             </RootStyle>
           </>
         )}

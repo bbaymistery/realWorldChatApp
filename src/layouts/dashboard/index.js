@@ -52,8 +52,7 @@ const DashboardLayout = () => {
   const [selected, setSelected] = useState(0)
   const { onToggleMode } = useSettings()
   return (
-    // <>
-    <div style={{ display: 'flex' }}>
+    <Stack direction={"row"}>
       <Box p={2} sx={{ backgroundColor: theme.palette.background.paper, height: "100vh", width: 100, boxShadow: "0px 0px 2px rgba(0,0,0,0.25)" }}>
         <Stack spacing={3} direction={"column"} sx={{ width: "100%", height: "100%" }} alignItems={"center"} justifyContent={"space-between"}>
           <Stack alignItems="center" spacing={4} >
@@ -87,7 +86,7 @@ const DashboardLayout = () => {
         </Stack>
       </Box>
       <Outlet />
-    </div>
+    </Stack>
   );
 };
 

@@ -58,6 +58,7 @@ export const colorPresets = [
     darker: "#7A0930",
     contrastText: "#fff",
   },
+  
 ];
 
 export const defaultPreset = colorPresets[0];

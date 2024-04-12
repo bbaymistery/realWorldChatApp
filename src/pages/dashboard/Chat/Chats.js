@@ -21,7 +21,6 @@ const ChatElement = (props) => {
                         <Typography variant="caption">{msg} </Typography>
                     </Stack>
                 </Stack>
-
                 <Stack spacing={2} alignItems={"center"}>
                     <Typography sx={{ fontWeight: 600 }} variant='caption'>{time}</Typography>
                     <Badge color='primary' badgeContent={unread} />
@@ -36,7 +35,6 @@ const Chats = () => {
     const [showScrollbar, setShowScrollbar] = useState(true);
 
     const [timeoutId, setTimeoutId] = useState(null);
-
 
     const handleScroll = () => {
         setShowScrollbar(true);
@@ -54,23 +52,18 @@ const Chats = () => {
     useEffect(() => {
         // Clear timeout when component unmounts or when timeoutId changes
         return () => clearTimeout(timeoutId);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [timeoutId]);
     return (
-        <Box sx={{
-            position: "relative",
-            width: 320,
-            backgroundColor: theme.palette.mode === "light" ? "#F8FAFA" : "#1e252f",
-            boxShadow: "0px 0px 2px rgba(0,0,0,0.25)"
-        }}>
+        <Box sx={{ position: "relative", width: 320, backgroundColor: theme.palette.mode === "light" ? "#F8FAFA" : "#1e252f", boxShadow: "0px 0px 2px rgba(0,0,0,0.25)" }}>
 
             <Stack p={4} spacing={2} sx={{ height: "100vh" }}>
                 <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} >
                     <Typography color={{ color: theme.palette.mode === "light" ? "#000" : "#fff" }} variant="h5">
                         Chats
                     </Typography>
-                    <IconButton>
-                        <CircleDashed />
-                    </IconButton>
+                    <IconButton><CircleDashed /></IconButton>
                 </Stack>
 
                 <Stack sx={{ width: "100%" }} >
@@ -101,11 +94,11 @@ const Chats = () => {
                             background: 'transparent', // Color of the scrollbar track
                         },
                         '&::-webkit-scrollbar-thumb': {
-                            background: '#888', // Color of the scrollbar thumb
+                            background: '#555', // Color of the scrollbar thumb
                             borderRadius: '4px', // Border radius of the scrollbar thumb
                         },
                         '&::-webkit-scrollbar-thumb:hover': {
-                            background: '#555', // Color of the scrollbar thumb on hover
+                            background: '#888', // Color of the scrollbar thumb on hover
                         },
                     }}
                     onScroll={handleScroll} // Attach the handleScroll function to the onScroll event
