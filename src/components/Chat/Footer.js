@@ -1,27 +1,9 @@
-import {
-  Box,
-  Fab,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import {
-  Camera,
-  File,
-  Image,
-  LinkSimple,
-  PaperPlaneTilt,
-  Smiley,
-  Sticker,
-  User,
-} from "phosphor-react";
+import { Box, Fab, IconButton, InputAdornment, Stack, TextField, Tooltip, } from "@mui/material";
+import { Camera, File, Image, LinkSimple, PaperPlaneTilt, Smiley, Sticker, User, } from "phosphor-react";
 import { useTheme, styled } from "@mui/material/styles";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
-
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
@@ -69,35 +51,32 @@ const ChatInput = ({ openPicker, setOpenPicker }) => {
   const [openActions, setOpenActions] = React.useState(false);
 
   return (
-    <StyledInput
-      fullWidth
-      placeholder="Write a message..."
-      variant="filled"
+    <StyledInput fullWidth placeholder="Write a message..." variant="filled"
       InputProps={{
         disableUnderline: true,
         startAdornment: (
-          <Stack sx={{ width: "max-content" }}>
+          <Stack sx={{ width: "max-content", }}>
             <Stack sx={{ position: "relative", display: openActions ? "inline-block" : "none", }}   >
-              {Actions.map((el) => (
-                <Tooltip placement="right" title={el.title}>
+              {Actions.map((el, i) => (
+                <Tooltip key={i} placement="right" title={el.title}>
                   <Fab onClick={() => { setOpenActions(!openActions); }} sx={{ position: "absolute", top: -el.y, backgroundColor: el.color, }} aria-label="add"   >
                     {el.icon}
                   </Fab>
                 </Tooltip>
               ))}
             </Stack>
-
-            <InputAdornment>
+            <InputAdornment position="end">
               <IconButton onClick={() => { setOpenActions(!openActions); }}  >
                 <LinkSimple />
               </IconButton>
             </InputAdornment>
           </Stack>
         ),
+        // emoji taraf
         endAdornment: (
           <Stack sx={{ position: "relative" }}>
-            <InputAdornment>
-              <IconButton onClick={() => { setOpenPicker(!openPicker); }}   >
+            <InputAdornment position="end">
+              <IconButton onClick={() => { setOpenPicker(!openPicker) }}>
                 <Smiley />
               </IconButton>
             </InputAdornment>
@@ -110,19 +89,20 @@ const ChatInput = ({ openPicker, setOpenPicker }) => {
 
 const Footer = () => {
   const theme = useTheme();
-
   const isMobile = useResponsive("between", "md", "xs", "sm");
-
   const [searchParams] = useSearchParams();
-
   const [openPicker, setOpenPicker] = React.useState(false);
+
   return (
     <Box sx={{ position: "relative", backgroundColor: "transparent !important", }} >
       <Box p={isMobile ? 1 : 2} width={"100%"} sx={{ backgroundColor: theme.palette.mode === "light" ? "#F8FAFF" : theme.palette.background, boxShadow: "0px 0px 2px rgba(0, 0, 0, 0.25)", }} >
         <Stack direction="row" alignItems={"center"} spacing={isMobile ? 1 : 3}>
           <Stack sx={{ width: "100%" }}>
+            {/* when ever i click pened emojis and click emoji then it works  */}
             <Box style={{ zIndex: 10, position: "fixed", display: openPicker ? "inline" : "none", bottom: 81, right: isMobile ? 20 : searchParams.get("open") === "true" ? 420 : 100, }}  >
-              <Picker theme={theme.palette.mode} data={data} onEmojiSelect={console.log} />
+              <Picker theme={theme.palette.mode} data={data} onEmojiSelect={(a) => {
+                console.log({ empji: "Sss", a })
+              }} />
             </Box>
             {/* Chat Input */}
             <ChatInput openPicker={openPicker} setOpenPicker={setOpenPicker} />

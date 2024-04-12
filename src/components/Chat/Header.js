@@ -1,17 +1,5 @@
 import React from "react";
-import {
-  Avatar,
-  Badge,
-  Box,
-  Divider,
-  Fade,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  styled,
-  Typography,
-} from "@mui/material";
+import { Avatar, Badge, Box, Divider, Fade, IconButton, Menu, MenuItem, Stack, styled, Typography, } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { CaretDown, MagnifyingGlass, Phone, VideoCamera } from "phosphor-react";
 import { faker } from "@faker-js/faker";
@@ -64,18 +52,13 @@ const Conversation_Menu = [
 
 const ChatHeader = () => {
   const isMobile = useResponsive("between", "md", "xs", "sm");
-  const [searchParams, setSearchParams] = useSearchParams();
   const theme = useTheme();
-
-  const [conversationMenuAnchorEl, setConversationMenuAnchorEl] =
-    React.useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [conversationMenuAnchorEl, setConversationMenuAnchorEl] = React.useState(null);
   const openConversationMenu = Boolean(conversationMenuAnchorEl);
-  const handleClickConversationMenu = (event) => {
-    setConversationMenuAnchorEl(event.currentTarget);
-  };
-  const handleCloseConversationMenu = () => {
-    setConversationMenuAnchorEl(null);
-  };
+  const handleClickConversationMenu = (event) => setConversationMenuAnchorEl(event.currentTarget);
+  const handleCloseConversationMenu = () => setConversationMenuAnchorEl(null);
+
 
   return (
     <Box p={2} width={"100%"} sx={{ backgroundColor: theme.palette.mode === "light" ? "#F8FAFF" : theme.palette.background, boxShadow: "0px 0px 2px rgba(0, 0, 0, 0.25)", }} >
@@ -92,48 +75,35 @@ const ChatHeader = () => {
           </Stack>
         </Stack>
         <Stack direction={"row"} alignItems="center" spacing={isMobile ? 1 : 3}>
-          <IconButton>
-            <VideoCamera />
-          </IconButton>
-          <IconButton>
-            <Phone />
-          </IconButton>
-          {!isMobile && (
-            <IconButton>
-              <MagnifyingGlass />
-            </IconButton>
-          )}
-
+          <IconButton><VideoCamera /></IconButton>
+          <IconButton><Phone /></IconButton>
+          {!isMobile && (<IconButton>  <MagnifyingGlass /></IconButton>)}
           <Divider orientation="vertical" flexItem />
-          <IconButton id="conversation-positioned-button" aria-controls={openConversationMenu ? "conversation-positioned-menu" : undefined} aria-haspopup="true" aria-expanded={openConversationMenu ? "true" : undefined} onClick={handleClickConversationMenu}    >
+
+          <IconButton
+            aria-haspopup="true"
+            id="conversation-positioned-button"
+            aria-controls={openConversationMenu ? "conversation-positioned-menu" : undefined}
+            aria-expanded={openConversationMenu ? "true" : undefined} onClick={handleClickConversationMenu}>
             <CaretDown />
           </IconButton>
           <Menu
-            MenuListProps={{
-              "aria-labelledby": "fade-button",
-            }}
+            MenuListProps={{ "aria-labelledby": "fade-button", }}
             TransitionComponent={Fade}
             id="conversation-positioned-menu"
             aria-labelledby="conversation-positioned-button"
             anchorEl={conversationMenuAnchorEl}
             open={openConversationMenu}
             onClose={handleCloseConversationMenu}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}  >
             <Box p={1}>
               <Stack spacing={1}>
-                {Conversation_Menu.map((el) => (
-                  <MenuItem onClick={handleCloseConversationMenu}>
+                {Conversation_Menu.map((el, i) => (
+                  <MenuItem key={i} onClick={handleCloseConversationMenu}>
                     <Stack sx={{ minWidth: 100 }} direction="row" alignItems={"center"} justifyContent="space-between"  >
                       <span>{el.title}</span>
-                    </Stack>{" "}
+                    </Stack>
                   </MenuItem>
                 ))}
               </Stack>
