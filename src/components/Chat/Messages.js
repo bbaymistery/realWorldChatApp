@@ -13,14 +13,14 @@ const Messages = () => {
       <Stack direection="column">
         {Chat_History.map((chat, index) => {
           switch (chat.type) {
-            case "divider": return <Timeline el={chat} />;
+            case "divider": return <Timeline key={index + -1000} el={chat} />;
             case "msg":
               switch (chat.subtype) {
-                case "img": return <MediaMsg el={chat} />;
-                case "doc": return <DocMsg el={chat} />;
-                case "link": return <LinkMsg el={chat} />;
-                case "reply": return <ReplyMsg el={chat} />;
-                default: return <TextMsg el={chat} />;
+                case "img": return <MediaMsg key={index} el={chat} menu={true} />;
+                case "doc": return <DocMsg key={index + 100} el={chat} menu={true} />;
+                case "link": return <LinkMsg key={index + 1000} el={chat} menu={true} />;
+                case "reply": return <ReplyMsg key={index + 10000} el={chat} menu={true} />;
+                default: return <TextMsg key={index + 100000} el={chat} menu={true} />;
               }
             default: break;
           }

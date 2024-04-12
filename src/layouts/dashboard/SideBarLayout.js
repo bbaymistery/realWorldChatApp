@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react'
-import { Avatar, Box, Divider, IconButton, Stack, } from '@mui/material'
+import {  Box, Divider, IconButton, Stack, } from '@mui/material'
 import React, { useState } from 'react'
 import useSettings from '../../hooks/useSettings'
 import Logo from '../../assets/Images/logo.ico'
 import { Nav_Buttons, Nav_Setting } from '../../data'
-import { faker } from '@faker-js/faker'
 import AntSwitch from '../../components/AntSwitchStyled'
+import ProfileMenu from './ProfileMenu'
 
 const SideBarLayout = () => {
     const theme = useTheme()
@@ -40,7 +40,7 @@ const SideBarLayout = () => {
 
                 <Stack spacing={4}>
                     <AntSwitch onChange={() => { onToggleMode() }} defaultChecked />
-                    <Avatar src={faker.image.avatar()} />
+                    <ProfileMenu />
                 </Stack>
             </Stack>
         </Box>

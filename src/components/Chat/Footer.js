@@ -97,7 +97,7 @@ const Footer = () => {
     <Box sx={{ position: "relative", backgroundColor: "transparent !important", }} >
       <Box p={isMobile ? 1 : 2} width={"100%"} sx={{ backgroundColor: theme.palette.mode === "light" ? "#F8FAFF" : theme.palette.background, boxShadow: "0px 0px 2px rgba(0, 0, 0, 0.25)", }} >
         <Stack direction="row" alignItems={"center"} spacing={isMobile ? 1 : 3}>
-          <Stack sx={{ width: "100%" }}>
+          <Stack sx={{ width: "100%",  }}>
             {/* when ever i click pened emojis and click emoji then it works  */}
             <Box style={{ zIndex: 10, position: "fixed", display: openPicker ? "inline" : "none", bottom: 81, right: isMobile ? 20 : searchParams.get("open") === "true" ? 420 : 100, }}  >
               <Picker theme={theme.palette.mode} data={data} onEmojiSelect={(a) => {

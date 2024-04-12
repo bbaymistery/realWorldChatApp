@@ -12,10 +12,18 @@ const MessageOption = () => {
     const handleClose = () => setAnchorEl(null);
     return (
         <>
-            <DotsThreeVertical size={20} id="basic-button" aria-controls={open ? "basic-menu" : undefined} aria-haspopup="true" aria-expanded={open ? "true" : undefined} onClick={handleClick} />
-            <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose} MenuListProps={{ "aria-labelledby": "basic-button", }}  >
+            <DotsThreeVertical style={{ cursor: "pointer" }} size={30} id="basic-button" aria-controls={open ? "basic-menu" : undefined} aria-haspopup="true" aria-expanded={open ? "true" : undefined} onClick={handleClick} />
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{ "aria-labelledby": "basic-button" }}
+                anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+                transformOrigin={{ horizontal: 'right', vertical: "top" }}
+            >
                 <Stack spacing={1} px={1}>
-                    {Message_options.map((el) => (<MenuItem onClick={handleClose}>{el.title}</MenuItem>))}
+                    {Message_options.map((el, i) => (<MenuItem key={i} onClick={handleClose}>{el.title}</MenuItem>))}
                 </Stack>
             </Menu>
         </>
@@ -25,7 +33,7 @@ const MessageOption = () => {
 const TextMsg = ({ el, menu }) => {
     const theme = useTheme();
     return (
-        <Stack p={.5} direction="row" justifyContent={el.incoming ? "start" : "end"}>
+        <Stack p={.5} direction="row" justifyContent={el.incoming ? "start" : "end"} alignItems={"center"}>
             <Box px={1.5} py={1.5} sx={{ backgroundColor: el.incoming ? alpha(theme.palette.background.default, 1) : theme.palette.primary.main, borderRadius: 1.5, width: "max-content", }}   >
                 <Typography variant="body2" color={el.incoming ? theme.palette.text : "#fff"} >
                     {el.message}
@@ -82,7 +90,7 @@ const LinkMsg = ({ el, menu }) => {
                         </Stack>
                     </Stack>
                     <Typography variant="body2" color={el.incoming ? theme.palette.text : "#fff"}  >
-                        <div dangerouslySetInnerHTML={{ __html: el.message }}></div>
+                        <span dangerouslySetInnerHTML={{ __html: el.message }}></span>
                     </Typography>
                 </Stack>
             </Box>

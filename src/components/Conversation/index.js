@@ -1,12 +1,10 @@
 import { Box, Stack } from '@mui/material'
 import React from 'react'
 import ChatHeader from '../Chat/Header'
-import { useTheme } from '@emotion/react'
 import ChatFooter from '../Chat/Footer'
 import ChatMessages from '../Chat/Messages'
 
 const Conversation = () => {
-    const theme = useTheme()
 
     return (
         <Stack height={"100%"} maxHeight={"100vh"} width={"auto"}>
