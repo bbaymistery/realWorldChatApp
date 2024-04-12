@@ -1,2 +1,3 @@
-export {default as ChatHeader} from "./Header";
-export {default as ChatFooter} from "./Footer";
+export { default as ChatHeader } from "./Header";
+export { default as ChatFooter } from "./Footer";
+export { default as ChatMessages } from "./Messages";

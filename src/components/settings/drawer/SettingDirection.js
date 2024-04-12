@@ -32,19 +32,8 @@ export default function SettingDirection() {
 
           return (
             <Grid key={direction} item xs={6}>
-              <BoxStyle
-                sx={{
-                  ...(isSelected && {
-                    color: 'primary.main',
-                    boxShadow: (theme) => theme.customShadows.z20,
-                  }),
-                }}
-              >
-                <Iconify
-                  icon={index === 0 ? 'ph:align-left-duotone' : 'ph:align-right-duotone'}
-                  width={28}
-                  height={28}
-                />
+              <BoxStyle sx={{ ...(isSelected && { color: 'primary.main', boxShadow: (theme) => theme.customShadows.z20, }), }}  >
+                <Iconify icon={index === 0 ? 'ph:align-left-duotone' : 'ph:align-right-duotone'} width={28} height={28} />
                 <BoxMask value={direction} />
               </BoxStyle>
             </Grid>
