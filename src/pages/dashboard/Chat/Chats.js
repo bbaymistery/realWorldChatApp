@@ -12,7 +12,7 @@ const ChatElement = (props) => {
             <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
                 <Stack direction={"row"} spacing={2}>
                     {online ?
-                        <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
+                        <StyledBadge  overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
                             <Avatar src={img} />
                         </StyledBadge> :
                         <Avatar src={img} />}

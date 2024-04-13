@@ -6,8 +6,8 @@ import { faker } from "@faker-js/faker";
 import { useSearchParams } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
 import BadgeStyled from "../BadgeStyled";
-
-
+import { ToggleSidebar } from "../../redux/slices/app";
+import { useDispatch } from "react-redux";
 
 const Conversation_Menu = [
   {
@@ -25,8 +25,10 @@ const Conversation_Menu = [
 ];
 
 const ChatHeader = () => {
-  const isMobile = useResponsive("between", "md", "xs", "sm");
+
   const theme = useTheme();
+  const dispatch = useDispatch()
+  const isMobile = useResponsive("between", "md", "xs", "sm");
   const [searchParams, setSearchParams] = useSearchParams();
   const [conversationMenuAnchorEl, setConversationMenuAnchorEl] = React.useState(null);
   const openConversationMenu = Boolean(conversationMenuAnchorEl);
@@ -35,13 +37,17 @@ const ChatHeader = () => {
   return (
     <Box p={2} width={"100%"} sx={{ backgroundColor: theme.palette.mode === "light" ? "#F8FAFF" : theme.palette.background, boxShadow: "0px 0px 2px rgba(0, 0, 0, 0.25)", }} >
       <Stack alignItems={"center"} direction={"row"} sx={{ width: "100%", height: "100%" }} justifyContent="space-between" >
-        <Stack onClick={() => { searchParams.set("open", true); setSearchParams(searchParams); }} spacing={2} direction="row"  >
-          <Box>
+        <Stack onClick={() => {
+          searchParams.set("open", true); setSearchParams(searchParams);
+          dispatch(ToggleSidebar())
+
+        }} spacing={2} direction="row"  >
+          <Box  style={{ cursor: 'pointer' }}>
             <BadgeStyled overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right", }} variant="dot"    >
               <Avatar alt={faker.name.fullName()} src={faker.image.avatar()} />
             </BadgeStyled>
           </Box>
-          <Stack spacing={0.2}>
+          <Stack  style={{ cursor: 'pointer' }} spacing={0.2}>
             <Typography variant="subtitle2">{faker.name.fullName()}</Typography>
             <Typography variant="caption">Online</Typography>
           </Stack>
