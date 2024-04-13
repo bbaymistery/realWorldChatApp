@@ -5,6 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import Divider from '@mui/material/Divider';
 import { Search, StyledBadge, StyledInputBase } from './constants';
 import { ChatList } from '../../../data';
+import { scrollingStyles } from '../../../components/scrollingStyles';
 const ChatElement = (props) => {
     let { theme, id, name, img, msg, time, unread, online } = props
     return (
@@ -12,7 +13,7 @@ const ChatElement = (props) => {
             <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
                 <Stack direction={"row"} spacing={2}>
                     {online ?
-                        <StyledBadge  overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
+                        <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
                             <Avatar src={img} />
                         </StyledBadge> :
                         <Avatar src={img} />}
@@ -80,29 +81,7 @@ const Chats = () => {
                     <Divider variant='middle' />
                 </Stack>
 
-                <Stack
-                    direction="column"
-                    sx={{
-                        flexGrow: 1,
-                        overflowY: 'scroll',
-                        overflowX: 'hidden',
-                        height: '100%',
-                        '&::-webkit-scrollbar': {
-                            width: showScrollbar ? '4px' : '0px',  // Width of the scrollbar
-                        },
-                        '&::-webkit-scrollbar-track': {
-                            background: 'transparent', // Color of the scrollbar track
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                            background: '#555', // Color of the scrollbar thumb
-                            borderRadius: '4px', // Border radius of the scrollbar thumb
-                        },
-                        '&::-webkit-scrollbar-thumb:hover': {
-                            background: '#888', // Color of the scrollbar thumb on hover
-                        },
-                    }}
-                    onScroll={handleScroll} // Attach the handleScroll function to the onScroll event
-                >
+                <Stack direction="column" sx={{ flexGrow: 1, height: '100%', ...scrollingStyles }} onScroll={handleScroll}   >
                     <Stack spacing={2.4}>
                         <Typography variant='subtitle2' sx={{ color: "#676767" }}>Pinned</Typography>
                         {ChatList.filter((el, _) => el.pinned).map((el, i) => {

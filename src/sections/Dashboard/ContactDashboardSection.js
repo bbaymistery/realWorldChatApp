@@ -5,8 +5,9 @@ import { faker } from "@faker-js/faker";
 import { Bell, CaretRight, Phone, Prohibit, Star, Trash, VideoCamera, X, } from "phosphor-react";
 import useResponsive from "../../hooks/useResponsive";
 import AntSwitch from "../../components/AntSwitchStyled";
-import { ToggleSidebar } from "../../redux/slices/app";
+import { ToggleSidebar, UpdateSidebarType } from "../../redux/slices/app";
 import { useDispatch } from "react-redux";
+import { scrollingStyles } from "../../components/scrollingStyles";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -65,26 +66,7 @@ const ContactDashboardSection = () => {
                         <IconButton onClick={() => { dispatch(ToggleSidebar()); }} >  <X /> </IconButton>
                     </Stack>
                 </Box>
-                <Stack sx={{
-                    height: "100%",
-                    position: "relative",
-                    flexGrow: 1,
-                    overflowY: "scroll",
-
-                    '&::-webkit-scrollbar': {
-                        width: '4px',  // Width of the scrollbar
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        background: 'transparent', // Color of the scrollbar track
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        background: '#555', // Color of the scrollbar thumb
-                        borderRadius: '4px', // Border radius of the scrollbar thumb
-                    },
-                    '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#888', // Color of the scrollbar thumb on hover
-                    },
-                }} p={2} spacing={3}   >
+                <Stack sx={{ height: "100%", position: "relative", flexGrow: 1, ...scrollingStyles }} p={2} spacing={3}>
                     <Stack alignItems="center" direction="row" spacing={2}>
                         <Avatar src={faker.image.avatar()} sx={{ height: 64, width: 64 }} />
                         <Stack spacing={0.5}>
@@ -109,8 +91,8 @@ const ContactDashboardSection = () => {
                     </Stack>
                     <Divider />
                     <Stack direction="row" alignItems="center" justifyContent={"space-between"}    >
-                        <Typography variant="subtitle2">Media, Links & Docs</Typography>
-                        <Button endIcon={<CaretRight />} > 401 </Button>
+                        <Typography variant="subtitle2">Media, Links..</Typography>
+                        <Button onClick={() => { dispatch(UpdateSidebarType("SHARED")) }} endIcon={<CaretRight />} > SharedMessages </Button>
                     </Stack>
                     <Stack direction={"row"} alignItems="center" spacing={2}>
                         {[1, 2, 3].map((el, i) => (<Box key={i}>  <img src={faker.image.city()} alt={faker.internet.userName()} />   </Box>))}
@@ -121,7 +103,7 @@ const ContactDashboardSection = () => {
                             <Star size={21} />
                             <Typography variant="subtitle2">Starred Messages</Typography>
                         </Stack>
-                        <IconButton><CaretRight /></IconButton>
+                        <IconButton onClick={() => { dispatch(UpdateSidebarType("STARRED")) }}><CaretRight /></IconButton>
                     </Stack>
                     <Divider />
                     <Stack direction="row" alignItems="center" justifyContent={"space-between"}  >

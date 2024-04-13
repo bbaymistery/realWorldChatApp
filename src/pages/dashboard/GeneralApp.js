@@ -5,6 +5,8 @@ import { useTheme } from "@emotion/react";
 import Conversation from "../../components/Conversation";
 import ContactDashboardSection from "../../sections/Dashboard/ContactDashboardSection";
 import { useSelector } from "react-redux";
+import ContactDashboaredSectionSharedMessages from "../../sections/Dashboard/ContactDashboaredSectionSharedMessages";
+import ContactDashboardSectionStarredMessages from "../../sections/Dashboard/ContactDashboardSectionStarredMessages";
 
 const GeneralApp = () => {
   const theme = useTheme()
@@ -13,8 +15,8 @@ const GeneralApp = () => {
   const sidebarTypeComponent = (sideBar) => {
     switch (sideBar.type) {
       case "CONTACT": return <ContactDashboardSection />
-      case "STARRED": return <></>;
-      case "SHARED": return <></>;
+      case "STARRED": return <ContactDashboardSectionStarredMessages />;
+      case "SHARED": return <ContactDashboaredSectionSharedMessages />;
       default: break;
     }
   }
