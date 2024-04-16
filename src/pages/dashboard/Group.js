@@ -9,9 +9,12 @@ import { Search, } from "../../components/Search/index";
 import { SearchIconWrapper, } from "../../components/Search/SearchIconWrapper";
 import { StyledInputBase, } from "../../components/Search/StyledInputBase";
 import ChatElement from "../../components/ChatElement";
+import CreateGroup from "../../sections/Dashboard/CreateGroup";
 
 const Group = () => {
-    const handleOpenDialog = () => {};
+    const [openDialog, setOpenDialog] = useState(false);
+    const handleCloseDialog = () => setOpenDialog(false);
+    const handleOpenDialog = () => setOpenDialog(true);
     const theme = useTheme();
 
     return (
@@ -49,6 +52,7 @@ const Group = () => {
                 </Box>
                 {/* Right */}
             </Stack>
+            {openDialog && <CreateGroup open={openDialog} handleClose={handleCloseDialog} />}
         </>
     );
 };
