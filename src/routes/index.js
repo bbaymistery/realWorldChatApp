@@ -27,7 +27,7 @@ export default function Router() {
         { path: "register", element: <RegisterPage /> },
         { path: "reset-password", element: <ResetPasswordPage /> },
         { path: "new-password", element: <NewPasswordPage /> },
-        {path: "verify", element: <VerifyPage /> },
+        { path: "verify", element: <VerifyPage /> },
       ]
     },
     {
@@ -37,6 +37,7 @@ export default function Router() {
         // bunu yazdigimiza gore  " http://localhost:3000/  "  entere basdigimizda otomatikmen /app  adresine gedir 
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
         { path: "app", element: <GeneralApp /> },
+        { path: "group", element: <Group /> },
         { path: "profile", element: <Profile /> },
         { path: "settings", element: <Settings /> },
         { path: "404", element: <Page404 /> },
@@ -56,6 +57,9 @@ const RegisterPage = Loadable(lazy(() => import("../pages/auth/Register")));
 const ResetPasswordPage = Loadable(lazy(() => import("../pages/auth/ResetPassword")))
 const NewPasswordPage = Loadable(lazy(() => import("../pages/auth/NewPassword")));
 const VerifyPage = Loadable(lazy(() => import("../pages/auth/Verify")));
+
+const Group = Loadable(lazy(() => import("../pages/dashboard/Group")));
+
 
 // Settings
 const Settings = Loadable(lazy(() => import("../pages/dashboard/Settings")));
