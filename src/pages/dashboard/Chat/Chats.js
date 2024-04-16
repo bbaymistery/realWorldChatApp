@@ -1,35 +1,14 @@
-import { Avatar, Badge, Box, Button, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
 import { ArchiveBox, CircleDashed, MagnifyingGlass } from 'phosphor-react'
 import React, { useEffect, useState } from 'react'
 import { useTheme } from "@mui/material/styles";
 import Divider from '@mui/material/Divider';
-import { Search, StyledBadge, StyledInputBase } from './constants';
+import { Search } from '../../../components/Search/index';
+import { StyledInputBase } from '../../../components/Search/StyledInputBase';
 import { ChatList } from '../../../data';
 import { scrollingStyles } from '../../../components/scrollingStyles';
-const ChatElement = (props) => {
-    let { theme, id, name, img, msg, time, unread, online } = props
-    return (
-        <Box key={id} sx={{ width: "100%", borderRadius: 1, backgroundColor: theme.palette.mode === "light" ? "#F8FAFA" : "#161C24", boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px;" }} p={2}  >
-            <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-                <Stack direction={"row"} spacing={2}>
-                    {online ?
-                        <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
-                            <Avatar src={img} />
-                        </StyledBadge> :
-                        <Avatar src={img} />}
-                    <Stack spacing={0.3}>
-                        <Typography variant="subtitle2">{name}</Typography>
-                        <Typography variant="caption">{msg} </Typography>
-                    </Stack>
-                </Stack>
-                <Stack spacing={2} alignItems={"center"}>
-                    <Typography sx={{ fontWeight: 600 }} variant='caption'>{time}</Typography>
-                    <Badge color='primary' badgeContent={unread} />
-                </Stack>
-            </Stack>
-        </Box>
-    )
-}
+import ChatElement from '../../../components/ChatElement';
+
 
 const Chats = () => {
     const theme = useTheme();
@@ -56,6 +35,7 @@ const Chats = () => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [timeoutId]);
+
     return (
         <Box sx={{ position: "relative", width: 320, backgroundColor: theme.palette.mode === "light" ? "#F8FAFA" : "#1e252f", boxShadow: "0px 0px 2px rgba(0,0,0,0.25)" }}>
 
