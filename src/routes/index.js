@@ -38,6 +38,7 @@ export default function Router() {
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
         { path: "app", element: <GeneralApp /> },
         { path: "group", element: <Group /> },
+        { path: "call", element: <Call /> },
         { path: "profile", element: <Profile /> },
         { path: "settings", element: <Settings /> },
         { path: "404", element: <Page404 /> },
@@ -58,7 +59,9 @@ const ResetPasswordPage = Loadable(lazy(() => import("../pages/auth/ResetPasswor
 const NewPasswordPage = Loadable(lazy(() => import("../pages/auth/NewPassword")));
 const VerifyPage = Loadable(lazy(() => import("../pages/auth/Verify")));
 
+
 const Group = Loadable(lazy(() => import("../pages/dashboard/Group")));
+const Call = Loadable(lazy(() => import("../pages/dashboard/Calll")));
 
 
 // Settings
