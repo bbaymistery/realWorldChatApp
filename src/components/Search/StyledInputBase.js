@@ -5,8 +5,7 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
     "& .MuiInputBase-input": {
         padding: theme.spacing(1, 1, 1, 0),
         width: '100%',
-        paddingLeft: `1rem`,
+        paddingLeft: `2.5rem`,
+
     }
 }))
-
-export default StyledInputBase
