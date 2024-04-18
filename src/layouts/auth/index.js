@@ -1,15 +1,15 @@
 import React from "react";
 import { Container, Stack } from "@mui/material";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import Logo from "../../assets/Images/logo.ico";
 
 const AuthLayout = () => {
-    //   const { isLoggedIn } = useSelector((state) => state.auth);
+    //Yani eger log in olubsa asla Auth ogin sayfasini birdaha gormuyecek
+    const isLoggedIn  = true
 
-    //   if (isLoggedIn) {
-    //     return <Navigate to={"/app"} />;
-    //   }
-
+    if (isLoggedIn) {
+      return <Navigate to={"/app"} />;
+    }
     return (
         <>
             <Container sx={{ mt: 5 }} maxWidth="sm">
