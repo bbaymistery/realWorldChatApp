@@ -1,0 +1,1 @@
+Herhansi bir request falan yapmadik sssadece model controller falan onlar ayarlandi
