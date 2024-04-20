@@ -1,6 +1,6 @@
-const { emailMatch } = require("../constants");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const emailMatch = require("../utils/emailMatch");
 
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: [true, "First Name is required"], },
@@ -26,10 +26,38 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now() },
     // unselect
     updatedAt: { type: Date },
-
+    verified: { type: Boolean, default: false },
+    otp: { type: String, },
+    otp_expiry_time: { type: Date, },
 });
 
+userSchema.pre("save", async function (next) {
+    // Only run this function if password was actually modified
+    if (!this.isModified("otp") || !this.otp) return next();
 
+    // Hash the otp with cost of 12
+    this.otp = await bcrypt.hash(this.otp.toString(), 12);
+
+    console.log(this.otp.toString(), "FROM PRE SAVE HOOK");
+
+    next();
+});
+
+userSchema.pre("save", async function (next) {
+    // Only run this function if password was actually modified
+    if (!this.isModified("password") || !this.password) return next();
+
+    // Hash the password with cost of 12
+    this.password = await bcrypt.hash(this.password, 12);
+
+    //! Shift it to next hook // this.passwordChangedAt = Date.now() - 1000;
+
+    next();
+});
+
+userSchema.methods.correctOTP = async function (candidateOTP, userOTP) {
+    return await bcrypt.compare(candidateOTP, userOTP);
+};
 userSchema.methods.correctPassword = async (candidatePassword, userPassword) => {
     //candidate pas is a pas whcih user supply to us 
     return await bcrypt.compare(candidatePassword, userPassword);

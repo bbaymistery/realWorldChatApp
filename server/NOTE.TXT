@@ -1,1 +1,3 @@
-Herhansi bir request falan yapmadik sssadece model controller falan onlar ayarlandi
+ Part_17_Auth_and_user_APIs
+
+ Biz postman ile check yazmadik sadece manuel olarak kodlari logikani yazdik
