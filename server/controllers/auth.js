@@ -2,14 +2,11 @@ const User = require("../models/user");
 const catchAsync = require("../utils/catchAsync");
 const filterObj = require("../utils/filterObj");
 const signToken = require("../utils/signToken");
-
+const jwt = require("jsonwebtoken");
 const otpGenerator = require('otp-generator');
 
-//!What we did up untill now  
-//!User come click to register  and submit details 
-//!We send an OTP  to the user 
-//!And when user submitted the OTP back yo use We verified it
-//!After the otp is verified u get kicked into the application it means u logged in after that
+//Signup =>register =>send otp => verify otp 
+
 exports.login = async (req, res, next) => {
 
     const { email, password } = req.body
@@ -153,5 +150,120 @@ exports.verifyOTP = catchAsync(async (req, res, next) => {
         message: "OTP verified Successfully!",
         token,
         user_id: user._id,
+    });
+});
+
+
+exports.protect = catchAsync(async (req, res, next) => {
+    // 1) Getting token and check if it's there
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt;
+    }
+
+    if (!token) {
+        return res.status(401).json({
+            message: "You are not logged in! Please log in to get access.",
+        });
+    }
+    // 2) Verification of token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    console.log(decoded);
+
+    // 3) Check if user still exists
+
+    const this_user = await User.findById(decoded.userId);
+
+    if (!this_user) {
+        return res.status(401).json({
+            message: "The user belonging to this token does no longer exists.",
+        });
+    }
+    // 4) Check if user changed password after the token was issued
+    //bir profili ikinefer isledir
+    //diyelimki 10:15de user log in etdi 
+    //sonra baska user 10:20de passwordu reset etdi
+    //After the pas reset we shouldnt allow any request from the user who logged in at 10:15
+
+    if (this_user.changedPasswordAfter(decoded.iat)) {
+        return res.status(401).json({
+            message: "User recently changed password! Please log in again.",
+        });
+    }
+
+    // GRANT ACCESS TO PROTECTED ROUTE
+    req.user = this_user;
+    next();
+});
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    // 1) Get user based on POSTed email
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+        return res.status(404).json({
+            status: "error",
+            message: "There is no user with email address.",
+        });
+    }
+
+    // 2) Generate the random reset token
+    //https://..?code=adasdasdasd    << reset token 
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    // 3) Send it to user's email
+    try {
+        const resetURL = `http://localhost:3000/auth/new-password?token=${resetToken}`;
+        // TODO => Send Email with this Reset URL to user's email address
+
+        console.log(resetURL);
+
+
+
+        res.status(200).json({
+            status: "success",
+            message: "Token sent to email!",
+        });
+    } catch (err) {
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+        return res.status(500).json({
+            message: "There was an error sending the email. Try again later!",
+        });
+    }
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+    // 1) Get user based on the token
+    const hashedToken = crypto.createHash("sha256").update(req.body.token).digest("hex");
+
+    const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: Date.now() }, });
+
+    // 2) If token has not expired, and there is user, set the new password
+    if (!user) {
+        return res.status(400).json({
+            status: "error",
+            message: "Token is Invalid or Expired",
+        });
+    }
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    // 3) Update changedPasswordAt property for the user
+    // 4) Log the user in, send JWT
+    const token = signToken(user._id);
+
+    res.status(200).json({
+        status: "success",
+        message: "Password Reseted Successfully",
+        token,
     });
 });

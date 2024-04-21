@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const emailMatch = require("../utils/emailMatch");
 
 const userSchema = new mongoose.Schema({
@@ -19,6 +20,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String },
     // unselect
     passwordChangedAt: { type: Date },
+    passwordConfirm: { type: Date },
     // unselect
     passwordResetToken: { type: String },
     // unselect
@@ -63,5 +65,26 @@ userSchema.methods.correctPassword = async (candidatePassword, userPassword) => 
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+
+userSchema.methods.createPasswordResetToken = function () {
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
+};
+
+
+userSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
+    if (this.passwordChangedAt) {
+        const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        return JWTTimeStamp < changedTimeStamp;
+    }
+
+    // FALSE MEANS NOT CHANGED
+    return false;
+};
 const User = new mongoose.model("User", userSchema);
 module.exports = User;
