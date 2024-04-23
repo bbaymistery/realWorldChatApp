@@ -4,7 +4,7 @@ const filterObj = require("../utils/filterObj");
 const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require('otp-generator');
-
+const mailService = require('../services/mailer')
 //Signup =>register =>send otp => verify otp 
 
 exports.login = async (req, res, next) => {
@@ -97,11 +97,21 @@ exports.sendOTP = catchAsync(async (req, res, next) => {
     console.log(new_otp);
 
     // TODO send mail
+    mailService.sendEmail({
+        from: "@elgun.ezmemmedov@mail.ru",
+        to: "elgun.ezmemmedov@gmail.com",
+        subject: "OTP for Talk",
+        text: "Your first otp testing is" + { new_otp } + " This is valid for 10 minute "
+    }).then(() => {
+        res.status(200).json({
+            status: "success",
+            message: "OTP Sent Successfully!",
+        });
+    }).catch(() => {
 
-    res.status(200).json({
-        status: "success",
-        message: "OTP Sent Successfully!",
-    });
+    })
+
+
 });
 
 
