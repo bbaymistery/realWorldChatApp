@@ -1,5 +1,6 @@
 
 const express = require("express");
+const routes = require("./routes/index")
 const morgan = require("morgan");
 
 //IF U Make request a high reate it result crashing servers so we use ratelimit
@@ -47,5 +48,6 @@ app.use("/talk", limiter)
 
 
 
+app.use(routes)
 
 module.exports = app
