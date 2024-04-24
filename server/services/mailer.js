@@ -1,12 +1,16 @@
 const sgMail = require("@sendgrid/mail");
 
-sgMail.setApiKey("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");
+sgMail.setApiKey(process.env.SG_KEY);
 //we registered to sendgrid.com =>elgun.ezmemmedov@gmail.com ile
-const sendSGMail = async ({ to, sender, subject, html, attachments = [], text }) => {
-    const from = "shreyanshshah242@gmail.com";
-    // text: text,
-    const msg = { to, from, subject, html, attachments }
+const sendSGMail = async ({ to, sender, subject, html, attachments, text }) => {
+    console.log({ to, sender, subject, html, attachments, text });
+
     try {
+        const from = "shreyanshshah242@gmail.com";
+        // text: text,
+        const msg = { to, from, subject, html, attachments }
+        console.log({msg});
+        
         return sgMail.send(msg);
     } catch (error) {
         console.log(error);
