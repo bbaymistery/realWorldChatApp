@@ -1,14 +1,16 @@
 const sgMail = require("@sendgrid/mail");
-const dotenv = require("dotenv")
-dotenv.config({ path: "./config.env" });
 
 sgMail.setApiKey(process.env.SG_KEY);
 //we registered to sendgrid.com =>elgun.ezmemmedov@gmail.com ile
 const sendSGMail = async ({ to, sender, subject, html, attachments, text }) => {
+    console.log({ to, sender, subject, html, attachments, text });
+
     try {
         const from = "shreyanshshah242@gmail.com";
         // text: text,
         const msg = { to, from, subject, html, attachments }
+        console.log({msg});
+        
         return sgMail.send(msg);
     } catch (error) {
         console.log(error);

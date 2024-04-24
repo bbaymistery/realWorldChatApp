@@ -5,40 +5,53 @@ const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require('otp-generator');
 const mailService = require('../services/mailer')
+const otp = require("../Templates/Mail/otp");
+const resetPassword = require("../Templates/Mail/resetPassword");
 //Signup =>register =>send otp => verify otp 
 
-exports.login = async (req, res, next) => {
+// User Login
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
 
-    const { email, password } = req.body
+  // console.log(email, password);
 
-    if (!email || !password) {
-        res.status(400).json({
-            status: "error",
-            message: "Both email and password are required"
-        })
-    }
-    //we include password field to userdatabse(when we fetch)
-    const userDoc = await User.findOne({ email }).select("+password")
+  if (!email || !password) {
+    res.status(400).json({
+      status: "error",
+      message: "Both email and password are required",
+    });
+    return;
+  }
 
+  const user = await User.findOne({ email: email }).select("+password");
 
-    if (!userDoc || await userDoc.correctPassword(password, userDoc.password)) {
-        res.status(400).json({
-            status: "error",
-            message: "Email or password incorrect"
-        })
-    }
+  if (!user || !user.password) {
+    res.status(400).json({
+      status: "error",
+      message: "Incorrect password",
+    });
 
+    return;
+  }
 
-    const token = signToken(userDoc._id)
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    res.status(400).json({
+      status: "error",
+      message: "Email or password is incorrect",
+    });
 
-    res.status(200).json({
-        status: "success",
-        message: "Logged in successfully",
-        token,
-        user_id: userDoc._id,
-    })
-}
+    return;
+  }
 
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    message: "Logged in successfully!",
+    token,
+    user_id: user._id,
+  });
+});
 
 exports.register = catchAsync(async (req, res, next) => {
     const { firstName, lastName, email, password } = req.body;
@@ -94,24 +107,19 @@ exports.sendOTP = catchAsync(async (req, res, next) => {
 
     await user.save({ new: true, validateModifiedOnly: true });
 
-    console.log(new_otp);
-
+    //!we have problem here 
     // TODO send mail
-    mailService.sendEmail({
-        from: "@elgun.ezmemmedov@mail.ru",
-        to: "elgun.ezmemmedov@gmail.com",
-        subject: "OTP for Talk",
-        text: "Your first otp testing is" + { new_otp } + " This is valid for 10 minute "
-    }).then(() => {
-        res.status(200).json({
-            status: "success",
-            message: "OTP Sent Successfully!",
-        });
-    }).catch(() => {
-
-    })
-
-
+    // mailService.sendEmail({
+    //     from: "elgun1993-93@gmail.com",
+    //     to: user.email,
+    //     subject: "Verification OTP",
+    //     html: otp(user.firstname, new_otp),
+    //     attachments: [],
+    // })
+    res.status(200).json({
+        status: "success",
+        message: "OTP Sent Successfully!",
+    });
 });
 
 
@@ -232,6 +240,15 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
         console.log(resetURL);
 
+
+        // mailService.sendEmail({
+        //   from: "elgun.ezmemmedov@gmail.com",
+        //   to: user.email,
+        //   subject: "Reset Password",
+        //   html: resetPassword(user.firstName, resetURL),
+        //   attachments: [],
+        // });
+    
 
 
         res.status(200).json({

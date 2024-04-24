@@ -2,14 +2,14 @@ import React from "react";
 import { Container, Stack } from "@mui/material";
 import { Navigate, Outlet } from "react-router-dom";
 import Logo from "../../assets/Images/logo.ico";
+import { useSelector } from "react-redux";
 
 const AuthLayout = () => {
     //Yani eger log in olubsa asla Auth ogin sayfasini birdaha gormuyecek
-    const isLoggedIn  = true
+    const { isLoggedIn } = useSelector((state) => state.auth);
+    if (isLoggedIn) return <Navigate to={"/app"} />;
 
-    if (isLoggedIn) {
-      return <Navigate to={"/app"} />;
-    }
+
     return (
         <>
             <Container sx={{ mt: 5 }} maxWidth="sm">
