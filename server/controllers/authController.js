@@ -65,7 +65,7 @@ exports.register = catchAsync(async (req, res, next) => {
 
     // OTP=one time password 
 
-
+    
     if (existing_user && existing_user.verified) {
         // user with this email already exists, Please login
         return res.status(400).json({
@@ -117,9 +117,13 @@ exports.sendOTP = catchAsync(async (req, res, next) => {
     //     html: otp(user.firstname, new_otp),
     //     attachments: [],
     // })
+
+
+
     res.status(200).json({
         status: "success",
         message: "OTP Sent Successfully!",
+        otp: new_otp
     });
 });
 
@@ -127,11 +131,15 @@ exports.sendOTP = catchAsync(async (req, res, next) => {
 exports.verifyOTP = catchAsync(async (req, res, next) => {
     // verify otp and update user accordingly
     const { email, otp } = req.body;
+
+    console.log({ email, otp });
+
     // { $gt: Date.now()  =>mustbe greaterThan the current timestampt that means
     //When user has submitte the OTP and we r no processing in our backend 
     //then at that time whatever this time is : it has to be ahead of the expiry time
     //that means the expiry time is not yet reached (send otp ye bax + 10 * 60 * 1000) yazmisiq
     const user = await User.findOne({ email, otp_expiry_time: { $gt: Date.now() } });
+    console.log({ email, otp });
 
     if (!user) {
         return res.status(400).json({
@@ -238,10 +246,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     try {
         const resetURL = `http://localhost:3001/auth/new-password?token=${resetToken}`;
         // TODO => Send Email with this Reset URL to user's email address
-const resetUrl_2=`/auth/new-password?token=${resetToken}`
+        const resetUrl_2 = `/auth/new-password?token=${resetToken}`
         console.log(resetURL);
-
-
         // mailService.sendEmail({
         //   from: "elgun.ezmemmedov@gmail.com",
         //   to: user.email,
@@ -249,8 +255,6 @@ const resetUrl_2=`/auth/new-password?token=${resetToken}`
         //   html: resetPassword(user.firstName, resetURL),
         //   attachments: [],
         // });
-
-
 
         res.status(200).json({
             status: "success",
