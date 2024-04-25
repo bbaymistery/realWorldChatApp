@@ -12,6 +12,9 @@ const initialState = {
     user_id: null,
     email: "",
     error: false,
+    //ozumnen ekledim 
+
+
 };
 
 const slice = createSlice({
@@ -32,6 +35,7 @@ const slice = createSlice({
             state.token = "";
             state.user_id = null;
         },
+
     },
 });
 
@@ -62,10 +66,52 @@ export function LoginUser(formValues) {
     };
 }
 
-// export function LogoutUser() {
-//     return async (dispatch, getState) => {
-//         window.localStorage.removeItem("user_id");
-//         dispatch(slice.actions.signOut());
-//     };
-// }
- 
+export function LogoutUser() {
+    return async (dispatch, getState) => {
+        window.localStorage.removeItem("user_id");
+        dispatch(slice.actions.signOut());
+    };
+}
+export function NewPassword(formValues) {
+    return async (dispatch, getState) => {
+
+        const url = "/auth/reset-password"
+        const headers = { "Content-Type": "application/json" }
+        dispatch(slice.actions.updateIsLoading({ isLoading: true, error: false }));
+
+        await axios
+            .post(url, { ...formValues, }, { headers })
+            .then(function (response) {
+                console.log(response);
+                dispatch(slice.actions.logIn({ isLoggedIn: true, token: response.data.token, }));
+                dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
+            })
+            .catch(function (error) {
+                console.log(error);
+                dispatch(slice.actions.updateIsLoading({ isLoading: false, error: true }));
+            });
+    };
+}
+
+export function ForgotPassword(formValues, callback) {
+    return async (dispatch, getState) => {
+        const url = "/auth/forgot-password"
+        const headers = { "Content-Type": "application/json" }
+        dispatch(slice.actions.updateIsLoading({ isLoading: true, error: false }));
+
+        await axios
+            .post(url, { ...formValues, }, { headers })
+            .then(function (response) {
+                console.log(response);
+                dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
+                if (response.data.status === 'success') {
+                    callback(response)
+                }
+
+            })
+            .catch(function (error) {
+                console.log(error);
+                dispatch(slice.actions.updateIsLoading({ isLoading: false, error: true }));
+            });
+    };
+}
