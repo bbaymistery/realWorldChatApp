@@ -3,6 +3,8 @@ import { Avatar, Box, Fade, Menu, MenuItem, Stack } from "@mui/material";
 import { Profile_Menu } from "../../data";
 import { faker } from '@faker-js/faker'
 import { useNavigate } from "react-router-dom";
+import { LogoutUser } from "../../redux/slices/auth";
+import { useDispatch } from "react-redux";
 //Ui menu constants
 const arOrigin = { vertical: "bottom", horizontal: "right", }
 const trOrigin = { vertical: "bottom", horizontal: "left", }
@@ -12,6 +14,7 @@ const menuProp = { "aria-labelledby": "fade-button", }
 
 const ProfileMenu = () => {
     const navigate = useNavigate()
+    const dispatch=useDispatch()
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openMenu = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -25,8 +28,7 @@ const ProfileMenu = () => {
         if (idx === 0) navigate("/profile")
         else if (idx === 1) navigate("/settings")
         else {
-            // dispatch(LogoutUser());
-            // socket.emit("end", { user_id });
+            dispatch(LogoutUser());
         }
 
     }

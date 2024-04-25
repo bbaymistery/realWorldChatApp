@@ -3,6 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const filterObj = require("../utils/filterObj");
 const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const otpGenerator = require('otp-generator');
 const mailService = require('../services/mailer')
 const otp = require("../Templates/Mail/otp");
@@ -11,46 +12,46 @@ const resetPassword = require("../Templates/Mail/resetPassword");
 
 // User Login
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  // console.log(email, password);
+    // console.log(email, password);
 
-  if (!email || !password) {
-    res.status(400).json({
-      status: "error",
-      message: "Both email and password are required",
+    if (!email || !password) {
+        res.status(400).json({
+            status: "error",
+            message: "Both email and password are required",
+        });
+        return;
+    }
+
+    const user = await User.findOne({ email: email }).select("+password");
+
+    if (!user || !user.password) {
+        res.status(400).json({
+            status: "error",
+            message: "Incorrect password",
+        });
+
+        return;
+    }
+
+    if (!user || !(await user.correctPassword(password, user.password))) {
+        res.status(400).json({
+            status: "error",
+            message: "Email or password is incorrect",
+        });
+
+        return;
+    }
+
+    const token = signToken(user._id);
+
+    res.status(200).json({
+        status: "success",
+        message: "Logged in successfully!",
+        token,
+        user_id: user._id,
     });
-    return;
-  }
-
-  const user = await User.findOne({ email: email }).select("+password");
-
-  if (!user || !user.password) {
-    res.status(400).json({
-      status: "error",
-      message: "Incorrect password",
-    });
-
-    return;
-  }
-
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    res.status(400).json({
-      status: "error",
-      message: "Email or password is incorrect",
-    });
-
-    return;
-  }
-
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: "success",
-    message: "Logged in successfully!",
-    token,
-    user_id: user._id,
-  });
 });
 
 exports.register = catchAsync(async (req, res, next) => {
@@ -235,9 +236,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     // 3) Send it to user's email
     try {
-        const resetURL = `http://localhost:3000/auth/new-password?token=${resetToken}`;
+        const resetURL = `http://localhost:3001/auth/new-password?token=${resetToken}`;
         // TODO => Send Email with this Reset URL to user's email address
-
+const resetUrl_2=`/auth/new-password?token=${resetToken}`
         console.log(resetURL);
 
 
@@ -248,12 +249,16 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         //   html: resetPassword(user.firstName, resetURL),
         //   attachments: [],
         // });
-    
+
 
 
         res.status(200).json({
             status: "success",
+            note: "Mail service didnt work so i decided to do in this way",
             message: "Token sent to email!",
+            resetURL,
+            resetUrl_2,
+            resetToken
         });
     } catch (err) {
         user.passwordResetToken = undefined;

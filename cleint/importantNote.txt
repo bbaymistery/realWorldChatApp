@@ -1,0 +1,1 @@
+sendgrid calismadi biz Resetpassword formda redirect etdik
