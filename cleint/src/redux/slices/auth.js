@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { showSnackbar } from "./app";
 import axios from "../../utils/axios";
 
 // ----------------------------------------------------------------------
@@ -14,7 +14,7 @@ const initialState = {
     error: false,
     //ozumnen ekledim 
 
-
+    otp: ""
 };
 
 const slice = createSlice({
@@ -34,6 +34,10 @@ const slice = createSlice({
             state.isLoggedIn = false;
             state.token = "";
             state.user_id = null;
+        },
+        updateRegisterEmail(state, action) {
+            state.email = action.payload.email;
+            state.otp = action.payload.otp;
         },
 
     },
@@ -57,10 +61,12 @@ export function LoginUser(formValues) {
 
                 dispatch(slice.actions.logIn(logInParams))
                 window.localStorage.setItem("user_id", response.data.user_id);
+                dispatch(showSnackbar({ severity: "success", message: response.data.message }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
             })
             .catch(function (error) {
                 console.log(error);
+                dispatch(showSnackbar({ severity: "error", message: error.message }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: true }));
             });
     };
@@ -84,10 +90,12 @@ export function NewPassword(formValues) {
             .then(function (response) {
                 console.log(response);
                 dispatch(slice.actions.logIn({ isLoggedIn: true, token: response.data.token, }));
+                dispatch(showSnackbar({ severity: "success", message: response.data.message }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
             })
             .catch(function (error) {
                 console.log(error);
+                dispatch(showSnackbar({ severity: "error", message: error.message }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: true }));
             });
     };
@@ -103,7 +111,9 @@ export function ForgotPassword(formValues, callback) {
             .post(url, { ...formValues, }, { headers })
             .then(function (response) {
                 console.log(response);
+
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
+                dispatch(showSnackbar({ severity: "success", message: response.data.message }));
                 if (response.data.status === 'success') {
                     callback(response)
                 }
@@ -111,7 +121,59 @@ export function ForgotPassword(formValues, callback) {
             })
             .catch(function (error) {
                 console.log(error);
+                dispatch(showSnackbar({ severity: "error", message: error.message }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: true }));
+            });
+    };
+}
+
+//!biz yene mail yerine authcontrollerde send otp den new_otp seklinde gonderdik back endden
+export function RegisterUser(formValues, callback) {
+    return async (dispatch, getState) => {
+        const url = "/auth/register"
+        const headers = { "Content-Type": "application/json" }
+        dispatch(slice.actions.updateIsLoading({ isLoading: true, error: false }));
+
+        await axios.post(url, { ...formValues, }, { headers })
+            .then(function (response) {
+                console.log(response);
+                callback(response)
+                dispatch(slice.actions.updateRegisterEmail({ email: formValues.email, otp: response.data.otp }));
+                dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
+                dispatch(showSnackbar({ severity: "success", message: response.data.message }));
+            })
+            .catch(function (error) {
+                console.log(error);
+                dispatch(showSnackbar({ severity: "error", message: error.message }));
+                dispatch(slice.actions.updateIsLoading({ error: true, isLoading: false }));
+            })
+        //bu email gelerse gecerlidi biz ozumuz resetpassworddaki kimi ediirik deye bunu kaldirdim
+        // .finally(() => {
+        //     if (!getState().auth.error) {
+        //         window.location.href = "/auth/verify";
+        //     }
+        // });
+    };
+}
+
+export function VerifyEmail(formValues) {
+    return async (dispatch, getState) => {
+        dispatch(slice.actions.updateIsLoading({ isLoading: true, error: false }));
+        const url = "/auth/verify"
+        const headers = { "Content-Type": "application/json" }
+        await axios.post(url, { ...formValues, }, { headers })
+            .then(function (response) {
+                console.log({ response, where: "inside authreducer" });
+                dispatch(slice.actions.updateRegisterEmail({ email: "", otp: "" }));
+                window.localStorage.setItem("user_id", response.data.user_id);
+                dispatch(slice.actions.logIn({ isLoggedIn: true, token: response.data.token, }));
+                dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
+                dispatch(showSnackbar({ severity: "success", message: response.data.message }));
+            })
+            .catch(function (error) {
+                console.log(error);
+                dispatch(showSnackbar({ severity: "error", message: error.message }));
+                dispatch(slice.actions.updateIsLoading({ error: true, isLoading: false }));
             });
     };
 }

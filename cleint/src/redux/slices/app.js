@@ -9,6 +9,11 @@ const initialState = {
     },
     chat_type: null,
     room_id: null,
+    snackbar: {
+        open: null,
+        severity: null,
+        message: null,
+    },
 };
 
 //todo App slice  starts
@@ -24,6 +29,15 @@ const slice = createSlice({
         updateSideBarType(state, action) {
             state.sideBar.type = action.payload.type;
         },
+        openSnackBar(state, action) {
+            state.snackbar.open = true;
+            state.snackbar.severity = action.payload.severity;
+            state.snackbar.message = action.payload.message;
+        },
+        closeSnackBar(state) {
+            state.snackbar.open = false;
+            state.snackbar.message = null;
+        },
     },
 });
 
@@ -33,7 +47,14 @@ export function ToggleSidebar() {
 export function UpdateSidebarType(type) {
     return async (dispatch, getState) => dispatch(slice.actions.updateSideBarType({ type }));
 }
+export const closeSnackBar = () => async (dispatch, getState) => {
+    dispatch(slice.actions.closeSnackBar());
+};
 
+export const showSnackbar = ({ severity, message }) => async (dispatch, getState) => {
+    dispatch(slice.actions.openSnackBar({ message, severity }))
+    setTimeout(() => { dispatch(slice.actions.closeSnackBar()); }, 4000)
+};
 //! App slice  finish
 
 

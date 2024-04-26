@@ -10,14 +10,17 @@ import { LoadingButton } from "@mui/lab";
 import FormProvider, { RHFTextField } from "../../components/hook-form";
 import { Eye, EyeSlash } from "phosphor-react";
 import { useDispatch, useSelector } from "react-redux";
+import { RegisterUser } from "../../redux/slices/auth";
+import { Navigate } from "react-router-dom";
 // import { RegisterUser } from "../../redux/slices/auth";
 
 // ----------------------------------------------------------------------
 
 export default function AuthRegisterForm() {
     const dispatch = useDispatch();
-    const { isLoading } = false;
+    const { isLoading } = useSelector((state) => state.auth);
     const [showPassword, setShowPassword] = useState(false);
+    const [newotp, setNewotp] = useState(null);
 
     const LoginSchema = Yup.object().shape({
         firstName: Yup.string().required("First name required"),
@@ -28,10 +31,10 @@ export default function AuthRegisterForm() {
     });
 
     const defaultValues = {
-        firstName: "",
-        lastName: "",
-        email: "demo@tawk.com",
-        password: "demo1234",
+        firstName: "teset1",
+        lastName: "test1",
+        email: "demo@tawk1.com",
+        password: "12345678",
     };
 
     const methods = useForm({ resolver: yupResolver(LoginSchema), defaultValues });
@@ -41,14 +44,24 @@ export default function AuthRegisterForm() {
     const onSubmit = async (data) => {
         try {
             // submit data to backend
-            //   dispatch(RegisterUser(data));
+            dispatch(RegisterUser(data, responseCallback));
         } catch (error) {
             console.error(error);
             reset();
             setError("afterSubmit", { ...error, message: error.message, });
         }
     };
+    const responseCallback = (response) => {
+        console.log({ response });
+        if (response.data.status === "success") {
+            setNewotp(response.data.otp);
+        }
 
+    }
+    if (newotp) {
+        return <Navigate to={`/auth/verify/?otp=${newotp}`} />;
+
+    }
     return (
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3} mb={4}>
