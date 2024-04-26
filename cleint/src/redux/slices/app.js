@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "../../utils/axios";
 
 const initialState = {
     user: {},
@@ -14,6 +15,11 @@ const initialState = {
         severity: null,
         message: null,
     },
+    //!usercontrollerdeki hgarsiliqlari asagidaki gibidir
+    users: [], //exports.getUsers //get-users
+    all_users: [], // => exports.getAllVerifiedUsers
+    friends: [],//=> exports.getFriends
+    friendRequests: [], //=>exports.getFriends
 };
 
 //todo App slice  starts
@@ -38,6 +44,18 @@ const slice = createSlice({
             state.snackbar.open = false;
             state.snackbar.message = null;
         },
+        updateUsers(state, action) {
+            state.users = action.payload.users;
+        },
+        updateAllUsers(state, action) {
+            state.all_users = action.payload.users;
+        },
+        updateFriends(state, action) {
+            state.friends = action.payload.friends;
+        },
+        updateFriendRequests(state, action) {
+            state.friendRequests = action.payload.requests;
+        },
     },
 });
 
@@ -47,9 +65,8 @@ export function ToggleSidebar() {
 export function UpdateSidebarType(type) {
     return async (dispatch, getState) => dispatch(slice.actions.updateSideBarType({ type }));
 }
-export const closeSnackBar = () => async (dispatch, getState) => {
-    dispatch(slice.actions.closeSnackBar());
-};
+export const closeSnackBar = () => async (dispatch, getState) => dispatch(slice.actions.closeSnackBar());
+
 
 export const showSnackbar = ({ severity, message }) => async (dispatch, getState) => {
     dispatch(slice.actions.openSnackBar({ message, severity }))
@@ -58,6 +75,78 @@ export const showSnackbar = ({ severity, message }) => async (dispatch, getState
 //! App slice  finish
 
 
+export function FetchUsers() {
+    return async (dispatch, getState) => {
+        const url = "/user/get-users"
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getState().auth.token}`,
+        }
+        await axios
+            .get(url, { headers })
+            .then((response) => {
+                console.log(response);
+                dispatch(slice.actions.updateUsers({ users: response.data.data }));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+}
+export function FetchAllUsers() {
+    return async (dispatch, getState) => {
+        const url = "/user/get-all-verified-users"
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getState().auth.token}`,
+        }
+        await axios
+            .get(url, { headers })
+            .then((response) => {
+                console.log(response);
+                dispatch(slice.actions.updateAllUsers({ users: response.data.data }));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+}
+export function FetchFriends() {
+    return async (dispatch, getState) => {
+        const url = "/user/get-users"
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getState().auth.token}`,
+        }
+        await axios
+            .get(url, { headers })
+            .then((response) => {
+                console.log(response);
+                dispatch(slice.actions.updateFriends({ friends: response.data.data }));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+}
+export function FetchFriendRequests() {
+    return async (dispatch, getState) => {
+        const url = "/user/get-requests"
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getState().auth.token}`,
+        }
+        await axios
+            .get(url, { headers })
+            .then((response) => {
+                console.log(response);
+                dispatch(slice.actions.updateFriendRequests({ requests: response.data.data }));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+}
 
 // Reducer
 export default slice.reducer;

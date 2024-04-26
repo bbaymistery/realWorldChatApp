@@ -36,6 +36,8 @@ export default function AuthLoginForm() {
         try {
             console.log(data);
             // submit data to backend
+
+
             dispatch(LoginUser(data));
         } catch (error) {
             console.error(error);
