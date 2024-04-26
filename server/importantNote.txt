@@ -1,2 +1,0 @@
-!sendgrid mail de hata olur biz register edende  Duzeldemmedim (send otp)
-Eynisi forgot passworddada gecerlidir  commente aldim mailserve send olani
