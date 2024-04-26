@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { ForgotPassword } from "../../redux/slices/auth";
 import { LoadingButton } from "@mui/lab";
 import { ForgotPassword } from "../../redux/slices/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 // ----------------------------------------------------------------------
@@ -39,7 +39,7 @@ export default function AuthResetPasswordForm() {
     };
 
     const responseCallback = (response) => {
-        console.log({ response });
+        console.log({ response, where: "responseCallback" });
         if (response.data.status === "success") {
             setRedirectUrl(response.data.resetUrl_2);
         }
