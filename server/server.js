@@ -26,7 +26,8 @@ const io = new Server(server, {
 
 //mongo connection
 const DB = process.env.DBURI.replace("<password>", process.env.DBPASSWORD)
-const mongoseOptions = { useNewUrlParser: true, useUnifiedTopology: true }
+//const mongoseOptions = { useNewUrlParser: true, useUnifiedTopology: true  }=>ikiside deprecetad olub
+const mongoseOptions = {  }
 
 mongoose.connect(DB, mongoseOptions)
     .then((con) => {

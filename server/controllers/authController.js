@@ -8,6 +8,7 @@ const otpGenerator = require('otp-generator');
 const mailService = require('../services/mailer')
 const otp = require("../Templates/Mail/otp");
 const resetPassword = require("../Templates/Mail/resetPassword");
+const { promisify } = require("util");
 //Signup =>register =>send otp => verify otp 
 
 // User Login
@@ -196,7 +197,7 @@ exports.protect = catchAsync(async (req, res, next) => {
         });
     }
     // 2) Verification of token
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECTER);
 
     console.log(decoded);
 

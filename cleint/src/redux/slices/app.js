@@ -56,6 +56,10 @@ const slice = createSlice({
         updateFriendRequests(state, action) {
             state.friendRequests = action.payload.requests;
         },
+        selectConversation(state, action) {
+            state.chat_type = "individual";
+            state.room_id = action.payload.room_id;
+        },
     },
 });
 
@@ -66,7 +70,9 @@ export function UpdateSidebarType(type) {
     return async (dispatch, getState) => dispatch(slice.actions.updateSideBarType({ type }));
 }
 export const closeSnackBar = () => async (dispatch, getState) => dispatch(slice.actions.closeSnackBar());
-
+export const SelectConversation = ({ room_id }) => {
+    return async (dispatch, getState) => { dispatch(slice.actions.selectConversation({ room_id })) };
+};
 
 export const showSnackbar = ({ severity, message }) => async (dispatch, getState) => {
     dispatch(slice.actions.openSnackBar({ message, severity }))
@@ -86,10 +92,12 @@ export function FetchUsers() {
             .get(url, { headers })
             .then((response) => {
                 console.log(response);
+                console.log("response");
                 dispatch(slice.actions.updateUsers({ users: response.data.data }));
             })
             .catch((err) => {
                 console.log(err);
+                console.log("err");
             });
     };
 }

@@ -43,9 +43,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const UserElement = ({ img, firstName, lastName, online, _id }) => {
     const theme = useTheme();
-
     const name = `${firstName} ${lastName}`;
-
     return (
         <StyledChatBox sx={{ width: "100%", borderRadius: 1, backgroundColor: theme.palette.background.paper, }} p={2}>
             <Stack direction="row" alignItems={"center"} justifyContent="space-between" >
@@ -60,8 +58,7 @@ const UserElement = ({ img, firstName, lastName, online, _id }) => {
                     </Stack>
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={"center"}>
-                    {/* socket.emit("friend_request", { to: _id, from: user_id }, () => {alert("request sent"); }); */}
-                    <Button onClick={() => { }}   >
+                    <Button onClick={() => { socket.emit("friend_request", { to: _id, from: user_id }, () => { alert("request sent") }) }}>
                         Send Request
                     </Button>
                 </Stack>
@@ -87,9 +84,7 @@ const FriendRequestElement = ({ img, firstName, lastName, incoming, missed, onli
                     </Stack>
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={"center"}>
-                    {/* emit "accept_request" event
-              socket.emit("accept_request", { request_id: id }); */}
-                    <Button onClick={() => { }}  >
+                    <Button onClick={() => { socket.emit("accept_request", { request_id: id }) }}  >
                         Accept Request
                     </Button>
                 </Stack>
@@ -107,7 +102,6 @@ const FriendElement = ({ img, firstName, lastName, incoming, missed, online, _id
         <StyledChatBox sx={{ width: "100%", borderRadius: 1, backgroundColor: theme.palette.background.paper, }} p={2} >
             <Stack direction="row" alignItems={"center"} justifyContent="space-between"  >
                 <Stack direction="row" alignItems={"center"} spacing={2}>
-                    {" "}
                     {online ? (
                         <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot" >
                             <Avatar alt={name} src={img} />
@@ -118,12 +112,9 @@ const FriendElement = ({ img, firstName, lastName, incoming, missed, online, _id
                     </Stack>
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={"center"}>
-                    {/* 
-             start a new conversation
-              socket.emit("start_conversation", { to: _id, from: user_id });
-            
-            */}
-                    <IconButton onClick={() => { }}    >  <Chat />  </IconButton>
+                    <IconButton onClick={() => { socket.emit("start_conversation", { to: _id, from: user_id }) }}>
+                        <Chat />
+                    </IconButton>
                 </Stack>
             </Stack>
         </StyledChatBox>
