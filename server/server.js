@@ -12,6 +12,7 @@ process.on("uncaughtException", (err) => {
 
 const http = require("http");
 const User = require("./models/user");
+const FriendRequest = require("./models/friendRequest");
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -41,32 +42,71 @@ server.listen(port, () => {
 //check app js we made example connection
 io.on("connection", async (socket) => {
     const user_id = socket.handshake.query.user_id;
-
-
     const socket_id = socket.id;
-    // console.log(socket);
     console.log({ user_id, socket_id });
-    if (user_id) {
-        await User.findByIdAndUpdate(user_id, { socket_id })
-    }
-    //We can write our socket event listeners here 
 
-    //!I am user a.  I have sent a friend req with (to:"id" )
+    if (user_id) await User.findByIdAndUpdate(user_id, { socket_id })
+    
+
     socket.on("friend_request", async (data) => {
         console.log(data.to)
+        const to_user = await User.findById(data.to).select("socket_id")
+        const from_user = await User.findById(data.from).select("socket_id")
 
-        //{to:"65775757"}
+        //create a friend request
+        await FriendRequest.create({ sender: data.from, recepient: data.to })
 
-        const to = await User.findById(data.to)
-        //So i must send an alert to the user with this "65775757" id that u have received a new friend req 
-        //Onuda io.to ile yapiyoruz 
+        // emit event request received to recipient
+        io.to(to_user?.socket_id).emit("new_friend_request", {
+            message: "New friend request received",
+        });
 
-
-        // Emit an event to the specific user's socket if they are connected
-        if (to && to.socket_id) {
-            io.to(to.socket_id).emit("new_friend_request", {});
-        }
+        io.to(from_user?.socket_id).emit("request_sent", {
+            message: "Request Sent successfully!",
+        });
     })
+
+    socket.on("accept_request", async (data) => {
+        // accept friend request => add ref of each other in friends array
+        //we send request_id which contain information => who sent request who received this req
+        console.log(data);
+        const request_doc = await FriendRequest.findById(data.request_id);
+
+        console.log(request_doc);
+
+        const sender = await User.findById(request_doc.sender);
+        const receiver = await User.findById(request_doc.recipient);
+
+        sender.friends.push(request_doc.recipient);
+        receiver.friends.push(request_doc.sender);
+
+        await receiver.save({ new: true, validateModifiedOnly: true });
+        await sender.save({ new: true, validateModifiedOnly: true });
+
+        await FriendRequest.findByIdAndDelete(data.request_id);
+
+        // delete this request doc
+        // emit event to both of them
+
+        // emit event request accepted to both
+        io.to(sender?.socket_id).emit("request_accepted", {
+            message: "Friend Request Accepted",
+        });
+        io.to(receiver?.socket_id).emit("request_accepted", {
+            message: "Friend Request Accepted",
+        });
+    });
+
+    socket.on("end", async (data) => {
+        // Find user by ID and set status as offline
+
+        if (data.user_id) await User.findByIdAndUpdate(data.user_id, { status: "Offline" })
+
+        // broadcast to all conversation rooms 
+        //.. of this user that this user is offline (disconnected)
+        console.log("closing connection");
+        socket.disconnect(0);
+    });
 
 })
 
