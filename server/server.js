@@ -1,5 +1,6 @@
 const app = require("./app");
 const mongoose = require("mongoose");
+const OneToOneMessage = require("./models/OneToOneMessage");
 const dotenv = require("dotenv")
 dotenv.config({ path: "./config.env" });
 
@@ -27,7 +28,7 @@ const io = new Server(server, {
 //mongo connection
 const DB = process.env.DBURI.replace("<password>", process.env.DBPASSWORD)
 //const mongoseOptions = { useNewUrlParser: true, useUnifiedTopology: true  }=>ikiside deprecetad olub
-const mongoseOptions = {  }
+const mongoseOptions = {}
 
 mongoose.connect(DB, mongoseOptions)
     .then((con) => {
@@ -51,23 +52,24 @@ io.on("connection", async (socket) => {
     if (user_id) await User.findByIdAndUpdate(user_id, { socket_id, status: "Online" })
 
 
+    // We can write our socket event listeners in here...
     socket.on("friend_request", async (data) => {
-        console.log(data.to)
-        const to_user = await User.findById(data.to).select("socket_id")
-        const from_user = await User.findById(data.from).select("socket_id")
+        const to = await User.findById(data.to).select("socket_id");
+        const from = await User.findById(data.from).select("socket_id");
 
-        //create a friend request
-        await FriendRequest.create({ sender: data.from, recepient: data.to })
-
+        // create a friend request
+        await FriendRequest.create({
+            sender: data.from,
+            recipient: data.to,
+        });
         // emit event request received to recipient
-        io.to(to_user?.socket_id).emit("new_friend_request", {
+        io.to(to?.socket_id).emit("new_friend_request", {
             message: "New friend request received",
         });
-
-        io.to(from_user?.socket_id).emit("request_sent", {
+        io.to(from?.socket_id).emit("request_sent", {
             message: "Request Sent successfully!",
         });
-    })
+    });
 
     socket.on("accept_request", async (data) => {
         // accept friend request => add ref of each other in friends array
@@ -99,6 +101,55 @@ io.on("connection", async (socket) => {
             message: "Friend Request Accepted",
         });
     });
+
+    socket.on("get_direct_conversations", async ({ user_id }, callback) => {
+
+        const existing_conversations = await OneToOneMessage.find({
+            participants: { $all: [user_id] },
+        }).populate("participants", "firstName lastName avatar _id email status");
+
+        // db.books.find({ authors: { $elemMatch: { name: "John Smith" } } })
+
+        console.log(existing_conversations);
+        //we pass list of all conversation which user has
+        callback(existing_conversations);
+    });
+
+    //bu hisse Cahts yaindaki user icona tikliyanda friends bolmesindeki friendse tikliyanda calisir
+    // components=>UserElemnt FriendElement   bax goreceyse
+    socket.on("start_conversation", async (data) => {
+        // data: {to: from:}
+
+        const { to, from } = data;
+
+        // check if there is any existing conversation
+
+        const existing_conversations = await OneToOneMessage.find({
+            participants: { $size: 2, $all: [to, from] },
+        }).populate("participants", "firstName lastName _id email status");
+
+        console.log(existing_conversations[0], "Existing Conversation");
+
+        // if no => create a new OneToOneMessage doc & emit event "start_chat" & send conversation details as payload
+        if (existing_conversations.length === 0) {
+            let new_chat = await OneToOneMessage.create({ participants: [to, from] });
+
+            new_chat = await OneToOneMessage.findById(new_chat).populate(
+                "participants",
+                "firstName lastName _id email status"
+            );
+
+            console.log(new_chat);
+
+            socket.emit("start_chat", new_chat);
+        }
+        // if yes => just emit event "start_chat" & send conversation details as payload
+        else {
+            socket.emit("start_chat", existing_conversations[0]);
+        }
+    });
+
+
 
     // Handle incoming text/link messages
     socket.on("text_message", async (data) => {

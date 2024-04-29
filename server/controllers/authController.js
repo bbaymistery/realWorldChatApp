@@ -133,14 +133,12 @@ exports.verifyOTP = catchAsync(async (req, res, next) => {
     // verify otp and update user accordingly
     const { email, otp } = req.body;
 
-    console.log({ email, otp });
 
     // { $gt: Date.now()  =>mustbe greaterThan the current timestampt that means
     //When user has submitte the OTP and we r no processing in our backend 
     //then at that time whatever this time is : it has to be ahead of the expiry time
     //that means the expiry time is not yet reached (send otp ye bax + 10 * 60 * 1000) yazmisiq
     const user = await User.findOne({ email, otp_expiry_time: { $gt: Date.now() } });
-    console.log({ email, otp });
 
     if (!user) {
         return res.status(400).json({
@@ -199,7 +197,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     // 2) Verification of token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECTER);
 
-    console.log(decoded);
 
     // 3) Check if user still exists
 
@@ -248,7 +245,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         const resetURL = `http://localhost:3000/auth/new-password?token=${resetToken}`;
         // TODO => Send Email with this Reset URL to user's email address
         const resetUrl_2 = `/auth/new-password?token=${resetToken}`
-        console.log(resetURL);
         // mailService.sendEmail({
         //   from: "elgun.ezmemmedov@gmail.com",
         //   to: user.email,

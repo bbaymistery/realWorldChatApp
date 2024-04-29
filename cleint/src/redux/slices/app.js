@@ -121,7 +121,7 @@ export function FetchAllUsers() {
 }
 export function FetchFriends() {
     return async (dispatch, getState) => {
-        const url = "/user/get-users"
+        const url = "/user/get-friends"
         const headers = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${getState().auth.token}`,
@@ -129,7 +129,7 @@ export function FetchFriends() {
         await axios
             .get(url, { headers })
             .then((response) => {
-                console.log(response);
+                console.log({ response, a: "feries" });
                 dispatch(slice.actions.updateFriends({ friends: response.data.data }));
             })
             .catch((err) => {
