@@ -20,14 +20,12 @@ exports.getUsers = catchAsync(async (req, res, next) => {
     const all_users = await User.find({ verified: true }).select("firstName lastName _id");
 
     const this_user = req.user //protect e bax goreceysen orda req.user=this__user   yazmisiq Onu req.user ile alrq
-    console.log({ all_users });
 
     //making sure that we r sending only those users who are not our friends already
     const remaining_users = all_users?.filter((user) =>
         !this_user.friends.includes(user._id) &&//exclue all of my current friend
         user._id.toString() !== req.user._id.toString()//exclude myself
     );
-    console.log({ remaining_users });
 
     res.status(200).json({
         status: "success",

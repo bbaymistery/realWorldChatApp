@@ -9,12 +9,19 @@ import { ChatList } from '../../../data';
 import { scrollingStyles } from '../../../components/scrollingStyles';
 import ChatElement from '../../../components/ChatElement';
 import Friends from '../../../sections/Dashboard/Friend';
-
+import { socket } from "../../../socket"
+import { useDispatch, useSelector } from 'react-redux';
+import { FetchDirectConversations } from '../../../redux/slices/conversation';
 const Chats = () => {
     const theme = useTheme();
+    const user_id = window.localStorage.getItem("user_id");
     const [showScrollbar, setShowScrollbar] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [timeoutId, setTimeoutId] = useState(null);
+
+    const { conversations } = useSelector((state) => state.conversation.direct_chat)
+
+    const dispatch = useDispatch();
 
     const handleScroll = () => {
         setShowScrollbar(true);
@@ -37,6 +44,18 @@ const Chats = () => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [timeoutId]);
+
+    useEffect(() => {
+        //data=> server.js de ki callback functiondir (existing_coversastion)
+        socket.emit("get_direct_conversations", { user_id }, (data) => {
+            console.log({ exs: data });
+            // dispatch action
+
+            dispatch(FetchDirectConversations({ conversations: data }));
+
+        })
+    }, [user_id, dispatch])
+
 
     return (
         <>
@@ -77,9 +96,10 @@ const Chats = () => {
                             })}
                         </Stack>
                         <br />
+                        {/* /convesartion ve ya friends yoxdur deye mmm    bos gorsenecek */}
                         <Stack spacing={2.4}>
                             <Typography variant='subtitle2' sx={{ color: "#676767" }}>All Chats</Typography>
-                            {ChatList.filter((el, _) => !el.pinned).map((el, i) => {
+                            {conversations.filter((el, _) => !el.pinned).map((el, i) => {
                                 return <ChatElement key={el.id} theme={theme} {...el} />
                             })}
                         </Stack>

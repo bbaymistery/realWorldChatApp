@@ -25,8 +25,9 @@ const GeneralApp = () => {
   const bgBox = theme.palette.mode === "light" ? "#F0F4FA" : theme.palette.background.paper
   return (
     <Stack direction={"row"} sx={{ width: "100%" }}>
-      {/* //!Chats */}
+
       <Chats />
+
       {/* //!Coversation  430 sidebar+en soldaki logolu olan yer +320de contact info (ContactDashboardSectionOlan Yer) */}
       <Box sx={{ height: "100%", width: boxWidth, backgroundColor: bgBox }}>
         {chat_type === "individual" && room_id !== null ? <Conversation /> :
@@ -40,7 +41,6 @@ const GeneralApp = () => {
             </Typography>
           </Stack>)}
       </Box>
-
       {sideBar.open && sidebarTypeComponent(sideBar)}
 
     </Stack>

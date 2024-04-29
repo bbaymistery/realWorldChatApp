@@ -2,7 +2,8 @@ import React from "react";
 import { Box, Badge, Stack, Avatar, Typography, IconButton, Button, } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import { Chat } from "phosphor-react";
-const socket = {}
+import { socket } from "../socket";
+
 
 const user_id = window.localStorage.getItem("user_id");
 
