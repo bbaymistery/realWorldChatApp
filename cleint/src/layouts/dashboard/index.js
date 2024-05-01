@@ -4,7 +4,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import SideBarLayout from "./SideBarLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { socket, connectSocket } from "../../socket";
-import { showSnackbar } from "../../redux/slices/app";
+import { SelectConversation, showSnackbar } from "../../redux/slices/app";
+import { AddDirectConversation, UpdateDirectConversation } from "../../redux/slices/conversation";
 const DashboardLayout = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -29,11 +30,12 @@ const DashboardLayout = () => {
         const existing_conversation = conversations.find(el => el?.id === data._id)
         if (existing_conversation) {
           // update direct conversation
-
+          dispatch(UpdateDirectConversation({ conversation: data }));
         } else {
           // add direct conversation
-
+          dispatch(AddDirectConversation({ conversation: data }));
         }
+        dispatch(SelectConversation({ room_id: data._id }));
       });
       socket.on("new_friend_request", () => {
         dispatch(showSnackbar({ severity: "success", message: "New friend request received" }))

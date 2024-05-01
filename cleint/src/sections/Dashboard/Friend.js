@@ -15,11 +15,13 @@ const UsersList = () => {
     return <> {users?.map((el, idx) => <UserElement key={idx} {...el} />)}</>
 };
 
-const FriendsList = () => {
+const FriendsList = ({handleClose}) => {
     const dispatch = useDispatch();
     const { friends } = useSelector((state) => state.app);
+    console.log({ friends });
+
     useEffect(() => { dispatch(FetchFriends()) }, [dispatch]);
-    return <>{friends?.map((el, idx) => <FriendElement key={idx} {...el} />)} </>
+    return <>{friends?.map((el, idx) => <FriendElement key={idx} {...el} handleClose={handleClose} />)}  </>
 };
 
 const RequestsList = () => {
@@ -47,7 +49,7 @@ const Friends = ({ open, handleClose }) => {
                         {(() => {
                             switch (value) {
                                 case 0: return <UsersList />;
-                                case 1: return <FriendsList />;
+                                case 1: return <FriendsList handleClose={handleClose} />;
                                 case 2: return <RequestsList />;
                                 default: break;
                             }

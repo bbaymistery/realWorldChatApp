@@ -96,24 +96,29 @@ const FriendRequestElement = ({ img, firstName, lastName, incoming, missed, onli
 
 // FriendElement
 
-const FriendElement = ({ img, firstName, lastName, incoming, missed, online, _id, }) => {
+const FriendElement = ({ img, firstName, lastName, incoming, missed, online, _id, handleClose }) => {
     const theme = useTheme();
     const name = `${firstName} ${lastName}`;
+    const handleStart = ({ _id, user_id }) => {
+        alert(`_id: ${_id}   user_id :${user_id}`)
+        socket.emit("start_conversation", { to: _id, from: user_id })
+        handleClose()
+    }
     return (
         <StyledChatBox sx={{ width: "100%", borderRadius: 1, backgroundColor: theme.palette.background.paper, }} p={2} >
             <Stack direction="row" alignItems={"center"} justifyContent="space-between"  >
                 <Stack direction="row" alignItems={"center"} spacing={2}>
-                    {online ? (
+                    {online ?
                         <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot" >
                             <Avatar alt={name} src={img} />
                         </StyledBadge>
-                    ) : (<Avatar alt={name} src={img} />)}
+                        : <Avatar alt={name} src={img} />}
                     <Stack spacing={0.3}>
                         <Typography variant="subtitle2">{name}</Typography>
                     </Stack>
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={"center"}>
-                    <IconButton onClick={() => { socket.emit("start_conversation", { to: _id, from: user_id }) }}>
+                    <IconButton onClick={() => handleStart({ _id, user_id })}>
                         <Chat />
                     </IconButton>
                 </Stack>

@@ -133,14 +133,8 @@ io.on("connection", async (socket) => {
         // if no => create a new OneToOneMessage doc & emit event "start_chat" & send conversation details as payload
         if (existing_conversations.length === 0) {
             let new_chat = await OneToOneMessage.create({ participants: [to, from] });
-
-            new_chat = await OneToOneMessage.findById(new_chat).populate(
-                "participants",
-                "firstName lastName _id email status"
-            );
-
-            console.log(new_chat);
-
+            new_chat = await OneToOneMessage.findById(new_chat).populate("participants", "firstName lastName _id email status");
+            // console.log(new_chat);
             socket.emit("start_chat", new_chat);
         }
         // if yes => just emit event "start_chat" & send conversation details as payload
@@ -148,9 +142,18 @@ io.on("connection", async (socket) => {
             socket.emit("start_chat", existing_conversations[0]);
         }
     });
+//!bunu ekledik
+    socket.on("get_messages", async (data, callback) => {
+        try {
+          const { messages } = await OneToOneMessage.findById(data.conversation_id ).select("messages");
+          callback(messages);
+        } catch (error) {
+          console.log(error);
+        }
+      });
 
-
-
+//!bunu ekledik 
+// evet daha once asagidakini eklemisdik bilirem ama normalda bu videoda eklenib
     // Handle incoming text/link messages
     socket.on("text_message", async (data) => {
         console.log("Received message:", data);
