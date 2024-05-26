@@ -56,6 +56,7 @@ const Chats = () => {
         })
     }, [user_id, dispatch])
 
+console.log({conversations});
 
     return (
         <>
@@ -89,12 +90,12 @@ const Chats = () => {
                     </Stack>
 
                     <Stack direction="column" sx={{ flexGrow: 1, height: '100%', ...scrollingStyles }} onScroll={handleScroll}   >
-                        <Stack spacing={2.4}>
+                        {/* <Stack spacing={2.4}>
                             <Typography variant='subtitle2' sx={{ color: "#676767" }}>Pinned</Typography>
                             {ChatList.filter((el, _) => el.pinned).map((el, i) => {
                                 return <ChatElement key={el.id} theme={theme} {...el} />
                             })}
-                        </Stack>
+                        </Stack> */}
                         <br />
                         {/* /convesartion ve ya friends yoxdur deye mmm    bos gorsenecek */}
                         <Stack spacing={2.4}>

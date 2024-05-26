@@ -4,13 +4,20 @@ import { Navigate, Outlet } from "react-router-dom";
 import SideBarLayout from "./SideBarLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { socket, connectSocket } from "../../socket";
-import { SelectConversation, showSnackbar } from "../../redux/slices/app";
-import { AddDirectConversation, UpdateDirectConversation } from "../../redux/slices/conversation";
+import { FetchUserProfile, SelectConversation, showSnackbar } from "../../redux/slices/app";
+import { AddDirectConversation, AddDirectMessage, UpdateDirectConversation } from "../../redux/slices/conversation";
 const DashboardLayout = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const user_id = window.localStorage.getItem("user_id");
   const { conversations, current_conversation } = useSelector((state) => state.conversation.direct_chat);
+
+  
+  useEffect(() => {
+    dispatch(FetchUserProfile());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   useEffect(() => {
     if (isLoggedIn) {
       window.onload = function () {
@@ -23,6 +30,24 @@ const DashboardLayout = () => {
       window.onload();
 
       if (!socket) connectSocket(user_id);
+
+      socket.on("new_message", (data) => {
+        const message = data.message;
+        // check if msg we got is from currently selected conversation
+        if (current_conversation?.id === data.conversation_id) {
+          
+          dispatch(
+            AddDirectMessage({
+              // id: message._id,
+              type: "msg",
+              subtype: message.type,
+              message: message.text,
+              incoming: message.to === user_id,
+              outgoing: message.from === user_id,
+            })
+          );
+        }
+      });
       //we will cpntinue on next episode
       socket.on("start_chat", (data) => {
         console.log(data);
@@ -56,10 +81,13 @@ const DashboardLayout = () => {
       socket?.off("new_friend_request");
       socket?.off("request_accepted");
       socket?.off("request_sent");
-      socket?.off("request_sent");
+      socket?.off("new_message");
       socket?.off("start_chat");
     };
-  }, [isLoggedIn, user_id, dispatch, conversations]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn,socket]);
+
+
 
   if (!isLoggedIn) return <Navigate to="/auth/login" />
 

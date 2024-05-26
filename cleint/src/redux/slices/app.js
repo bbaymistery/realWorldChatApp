@@ -27,7 +27,9 @@ const slice = createSlice({
     name: "app",
     initialState,
     reducers: {
-
+        fetchUser(state, action) {
+            state.user = action.payload.user;
+          },
         // Toggle Sidebar
         toggleSideBar(state) {
             state.sideBar.open = !state.sideBar.open;
@@ -91,8 +93,6 @@ export function FetchUsers() {
         await axios
             .get(url, { headers })
             .then((response) => {
-                console.log(response);
-                console.log("response");
                 dispatch(slice.actions.updateUsers({ users: response.data.data }));
             })
             .catch((err) => {
@@ -111,7 +111,6 @@ export function FetchAllUsers() {
         await axios
             .get(url, { headers })
             .then((response) => {
-                console.log(response);
                 dispatch(slice.actions.updateAllUsers({ users: response.data.data }));
             })
             .catch((err) => {
@@ -129,7 +128,6 @@ export function FetchFriends() {
         await axios
             .get(url, { headers })
             .then((response) => {
-                console.log({ response, a: "feries" });
                 dispatch(slice.actions.updateFriends({ friends: response.data.data }));
             })
             .catch((err) => {
@@ -147,7 +145,6 @@ export function FetchFriendRequests() {
         await axios
             .get(url, { headers })
             .then((response) => {
-                console.log(response);
                 dispatch(slice.actions.updateFriendRequests({ requests: response.data.data }));
             })
             .catch((err) => {
@@ -155,7 +152,24 @@ export function FetchFriendRequests() {
             });
     };
 }
-
+export const FetchUserProfile = () => {
+    
+    return async (dispatch, getState) => {
+      axios
+        .get("/user/get-me", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getState().auth.token}`,
+          },
+        })
+        .then((response) => {
+          dispatch(slice.actions.fetchUser({ user: response.data.data }));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+  };
   
 // Reducer
 export default slice.reducer;

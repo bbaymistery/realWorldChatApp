@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { CaretLeft } from "phosphor-react";
 
 import { scrollingStyles } from "../../../components/scrollingStyles";
 import ProfileForm from "../../../sections/Dashboard/SettingsDashborad/ProfileForm";
 
-
+import { useDispatch } from "react-redux";
+import { FetchUserProfile } from "../../../redux/slices/app";
 const Profile = () => {
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    dispatch(FetchUserProfile());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <>
       <Stack direction="row" sx={{ width: "100%" }}>

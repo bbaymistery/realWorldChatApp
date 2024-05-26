@@ -9,7 +9,6 @@ const sendSGMail = async ({ to, sender, subject, html, attachments, text }) => {
         const from = "shreyanshshah242@gmail.com";
         // text: text,
         const msg = { to, from, subject, html, attachments }
-        console.log({msg});
         
         return sgMail.send(msg);
     } catch (error) {

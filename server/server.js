@@ -47,7 +47,6 @@ server.listen(port, () => {
 io.on("connection", async (socket) => {
     const user_id = socket.handshake.query.user_id;
     const socket_id = socket.id;
-    console.log({ user_id, socket_id });
 
     if (user_id) await User.findByIdAndUpdate(user_id, { socket_id, status: "Online" })
 
@@ -74,11 +73,7 @@ io.on("connection", async (socket) => {
     socket.on("accept_request", async (data) => {
         // accept friend request => add ref of each other in friends array
         //we send request_id which contain information => who sent request who received this req
-        console.log(data);
         const request_doc = await FriendRequest.findById(data.request_id);
-
-        console.log(request_doc);
-
         const sender = await User.findById(request_doc.sender);
         const receiver = await User.findById(request_doc.recipient);
 
@@ -127,9 +122,7 @@ io.on("connection", async (socket) => {
         const existing_conversations = await OneToOneMessage.find({
             participants: { $size: 2, $all: [to, from] },
         }).populate("participants", "firstName lastName _id email status");
-
-        console.log(existing_conversations[0], "Existing Conversation");
-
+        
         // if no => create a new OneToOneMessage doc & emit event "start_chat" & send conversation details as payload
         if (existing_conversations.length === 0) {
             let new_chat = await OneToOneMessage.create({ participants: [to, from] });
@@ -141,19 +134,24 @@ io.on("connection", async (socket) => {
         else {
             socket.emit("start_chat", existing_conversations[0]);
         }
+    
     });
-//!bunu ekledik
+ 
+    //!get messages bunu yoxla
     socket.on("get_messages", async (data, callback) => {
         try {
-          const { messages } = await OneToOneMessage.findById(data.conversation_id ).select("messages");
-          callback(messages);
-        } catch (error) {
-          console.log(error);
-        }
-      });
+            const { messages } = await OneToOneMessage.findById(data.conversation_id).select("messages");
+            callback(messages);
+            console.log({ messages });
 
-//!bunu ekledik 
-// evet daha once asagidakini eklemisdik bilirem ama normalda bu videoda eklenib
+        } catch (error) {
+            console.log(error);
+        }
+    });
+
+    console.log({ user_id, socket_id });
+
+    // evet daha once asagidakini eklemisdik bilirem ama normalda bu videoda eklenib
     // Handle incoming text/link messages
     socket.on("text_message", async (data) => {
         console.log("Received message:", data);
