@@ -9,8 +9,9 @@ import FormProvider from "../../components/hook-form";
 import RHFCodes from "../../components/hook-form/RHFCodes";
 import { useDispatch, useSelector } from "react-redux";
 import { VerifyEmail } from "../../redux/slices/auth";
-import { useSearchParams } from "react-router-dom";
-
+import { Navigate, useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
 export default function VerifyForm() {
@@ -19,7 +20,7 @@ export default function VerifyForm() {
     const [queryParameters] = useSearchParams();
     const otp = queryParameters.get('otp')
     //  console.log(+otp.split("")[0]); //bunu normalde mailden gelir maile baxib yazrg falan... Ama bizde mail calismadi Manuel yapdm 
-
+    const navigate = useNavigate();
     const VerifyCodeSchema = Yup.object().shape({
         code1: Yup.string().required("Code is required"),
         code2: Yup.string().required("Code is required"),
@@ -43,19 +44,33 @@ export default function VerifyForm() {
         resolver: yupResolver(VerifyCodeSchema),
         defaultValues,
     });
-
+    const [redirect, setRedirect] = useState(false)
     const { handleSubmit, } = methods;
 
     const onSubmit = async (data) => {
         const otp = `${data.code1}${data.code2}${data.code3}${data.code4}${data.code5}${data.code6}`
         try {
             //   Send API Request
-            dispatch(VerifyEmail({ email, otp, }));
+            dispatch(VerifyEmail({ email, otp, }, responseCallback));
         } catch (error) {
             console.error(error);
         }
-    };
 
+    };
+    const responseCallback = (response) => {
+        if (response.data.status === "success") {
+            setRedirect(true);
+        }
+
+    }
+
+
+    useEffect(() => {
+        if (redirect) {
+            setRedirect(false)
+            navigate('/auth/login');
+        }
+    }, [redirect, navigate]);
     return (
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>

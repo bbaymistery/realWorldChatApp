@@ -22,18 +22,23 @@ const slice = createSlice({
     initialState,
     reducers: {
         updateIsLoading(state, action) {
+            
             state.error = action.payload.error;
             state.isLoading = action.payload.isLoading;
         },
         logIn(state, action) {
+
             state.isLoggedIn = action.payload.isLoggedIn;
             state.token = action.payload.token;
             state.user_id = action.payload.user_id;
+        
         },
         signOut(state, action) {
             state.isLoggedIn = false;
             state.token = "";
             state.user_id = null;
+            state.isLoading = false;
+
         },
         updateRegisterEmail(state, action) {
             state.email = action.payload.email;
@@ -48,6 +53,7 @@ export default slice.reducer;
 
 
 export function LoginUser(formValues) {
+
     return async (dispatch, getState) => {
         // Make API call here
         const url = "/auth/login"
@@ -56,7 +62,6 @@ export function LoginUser(formValues) {
 
         await axios.post(url, { ...formValues, }, { headers })
             .then(function (response) {
-                console.log(response);
                 const logInParams = { isLoggedIn: true, token: response.data.token, user_id: response.data.user_id }
 
                 dispatch(slice.actions.logIn(logInParams))
@@ -88,7 +93,6 @@ export function NewPassword(formValues) {
         await axios
             .post(url, { ...formValues, }, { headers })
             .then(function (response) {
-                console.log(response);
                 dispatch(slice.actions.logIn({ isLoggedIn: true, token: response.data.token, }));
                 dispatch(showSnackbar({ severity: "success", message: response.data.message }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
@@ -156,17 +160,19 @@ export function RegisterUser(formValues, callback) {
     };
 }
 
-export function VerifyEmail(formValues) {
+export function VerifyEmail(formValues, callback) {
     return async (dispatch, getState) => {
-        dispatch(slice.actions.updateIsLoading({ isLoading: true, error: false }));
         const url = "/auth/verify"
         const headers = { "Content-Type": "application/json" }
         await axios.post(url, { ...formValues, }, { headers })
             .then(function (response) {
+                callback(response)
+
+                dispatch(slice.actions.updateIsLoading({ isLoading: true, error: false }));
                 console.log({ response, where: "inside authreducer" });
                 dispatch(slice.actions.updateRegisterEmail({ email: "", otp: "" }));
                 window.localStorage.setItem("user_id", response.data.user_id);
-                dispatch(slice.actions.logIn({ isLoggedIn: true, token: response.data.token, }));
+                // dispatch(slice.actions.logIn({ isLoggedIn: true, token: response.data.token, }));
                 dispatch(slice.actions.updateIsLoading({ isLoading: false, error: false }));
                 dispatch(showSnackbar({ severity: "success", message: response.data.message }));
             })

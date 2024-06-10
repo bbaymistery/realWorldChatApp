@@ -52,7 +52,9 @@ exports.getRequests = catchAsync(async (req, res, next) => {
 
 //*gert my friends 
 exports.getFriends = catchAsync(async (req, res, next) => {
-    const this_user = await User.findById(req.user._id).populate("friends", "_id firstName lastName");
+
+    
+    const this_user = await User.findById(req.user._id).populate("friends", "_id firstName lastName status");
 
     res.status(200).json({
         status: "success",

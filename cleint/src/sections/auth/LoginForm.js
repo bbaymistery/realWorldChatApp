@@ -16,8 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function AuthLoginForm() {
 
     const dispatch = useDispatch();
-    const { isLoading } = useSelector((state) => state.auth);
-
+    const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
 
 
@@ -34,11 +33,13 @@ export default function AuthLoginForm() {
 
     const onSubmit = async (data) => {
         try {
+            setIsLoading(true)
             console.log(data);
             // submit data to backend
 
 
             dispatch(LoginUser(data));
+            setIsLoading(false)
         } catch (error) {
             console.error(error);
             reset();

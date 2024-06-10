@@ -15,13 +15,12 @@ const UsersList = () => {
     return <> {users?.map((el, idx) => <UserElement key={idx} {...el} />)}</>
 };
 
-const FriendsList = ({handleClose}) => {
+const FriendsList = ({ handleClose }) => {
     const dispatch = useDispatch();
     const { friends } = useSelector((state) => state.app);
-    console.log({ friends });
 
     useEffect(() => { dispatch(FetchFriends()) }, [dispatch]);
-    return <>{friends?.map((el, idx) => <FriendElement key={idx} {...el} handleClose={handleClose} />)}  </>
+    return <>{friends?.map((el, idx) => <FriendElement key={idx} {...el} handleClose={handleClose} online={el.status === 'Online' ? true : false} />)}  </>
 };
 
 const RequestsList = () => {

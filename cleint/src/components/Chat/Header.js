@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
 import BadgeStyled from "../BadgeStyled";
 import { ToggleSidebar } from "../../redux/slices/app";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const Conversation_Menu = [
   {
@@ -28,6 +28,10 @@ const ChatHeader = () => {
 
   const theme = useTheme();
   const dispatch = useDispatch()
+  const {current_conversation} = useSelector((state) => state.conversation.direct_chat);
+  const user_name =current_conversation?.name;
+  const user_img = faker.image.avatar()
+
   const isMobile = useResponsive("between", "md", "xs", "sm");
   const [searchParams, setSearchParams] = useSearchParams();
   const [conversationMenuAnchorEl, setConversationMenuAnchorEl] = React.useState(null);
@@ -44,11 +48,11 @@ const ChatHeader = () => {
         }} spacing={2} direction="row"  >
           <Box  style={{ cursor: 'pointer' }}>
             <BadgeStyled overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right", }} variant="dot"    >
-              <Avatar alt={faker.name.fullName()} src={faker.image.avatar()} />
+              <Avatar alt={user_name} src={user_img} />
             </BadgeStyled>
           </Box>
           <Stack  style={{ cursor: 'pointer' }} spacing={0.2}>
-            <Typography variant="subtitle2">{faker.name.fullName()}</Typography>
+            <Typography variant="subtitle2">{user_name}</Typography>
             <Typography variant="caption">Online</Typography>
           </Stack>
         </Stack>

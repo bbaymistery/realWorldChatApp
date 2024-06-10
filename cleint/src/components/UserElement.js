@@ -104,6 +104,7 @@ const FriendElement = ({ img, firstName, lastName, incoming, missed, online, _id
         socket.emit("start_conversation", { to: _id, from: user_id })
         handleClose()
     }
+    
     return (
         <StyledChatBox sx={{ width: "100%", borderRadius: 1, backgroundColor: theme.palette.background.paper, }} p={2} >
             <Stack direction="row" alignItems={"center"} justifyContent="space-between"  >

@@ -30,7 +30,10 @@ const GeneralApp = () => {
 
       {/* //!Coversation  430 sidebar+en soldaki logolu olan yer +320de contact info (ContactDashboardSectionOlan Yer) */}
       <Box sx={{ height: "100%", width: boxWidth, backgroundColor: bgBox }}>
-        {chat_type === "individual" && room_id !== null ? <Conversation /> :
+        {chat_type === "individual" && room_id !== null ?
+
+         <Conversation /> :
+         
           (<Stack spacing={2} sx={{ height: "100%", width: "100%" }} alignItems="center" justifyContent={"center"}   >
             <NoChat />
             <Typography variant="subtitle2">
