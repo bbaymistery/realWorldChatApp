@@ -122,7 +122,7 @@ io.on("connection", async (socket) => {
         const existing_conversations = await OneToOneMessage.find({
             participants: { $size: 2, $all: [to, from] },
         }).populate("participants", "firstName lastName _id email status");
-        
+
         // if no => create a new OneToOneMessage doc & emit event "start_chat" & send conversation details as payload
         if (existing_conversations.length === 0) {
             let new_chat = await OneToOneMessage.create({ participants: [to, from] });
@@ -134,9 +134,9 @@ io.on("connection", async (socket) => {
         else {
             socket.emit("start_chat", existing_conversations[0]);
         }
-    
+
     });
- 
+
     //!get messages bunu yoxla
     socket.on("get_messages", async (data, callback) => {
         try {
@@ -208,6 +208,217 @@ io.on("connection", async (socket) => {
         // emit outgoing_message -> from user
     });
 
+    // handle start_audio_call event
+    // !-------------- HANDLE AUDIO CALL SOCKET EVENTS ----------------- //
+
+
+
+    socket.on("start_audio_call", async (data) => {
+        const { from, to, roomID } = data;
+
+        const to_user = await User.findById(to);
+        const from_user = await User.findById(from);
+
+        console.log("to_user", to_user);
+
+        // send notification to receiver of call
+        io.to(to_user?.socket_id).emit("audio_call_notification", {
+            from: from_user,
+            roomID,
+            streamID: from,
+            userID: to,
+            userName: to,
+        });
+    });
+
+    // handle audio_call_not_picked
+    socket.on("audio_call_not_picked", async (data) => {
+        console.log(data);
+        // find and update call record
+        const { to, from } = data;
+
+        const to_user = await User.findById(to);
+
+        await AudioCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Missed", status: "Ended", endedAt: Date.now() }
+        );
+
+        // TODO => emit call_missed to receiver of call
+        io.to(to_user?.socket_id).emit("audio_call_missed", {
+            from,
+            to,
+        });
+    });
+
+    // handle audio_call_accepted
+    socket.on("audio_call_accepted", async (data) => {
+        const { to, from } = data;
+
+        const from_user = await User.findById(from);
+
+        // find and update call record
+        await AudioCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Accepted" }
+        );
+
+        // TODO => emit call_accepted to sender of call
+        io.to(from_user?.socket_id).emit("audio_call_accepted", {
+            from,
+            to,
+        });
+    });
+
+    // handle audio_call_denied
+    socket.on("audio_call_denied", async (data) => {
+        // find and update call record
+        const { to, from } = data;
+
+        await AudioCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Denied", status: "Ended", endedAt: Date.now() }
+        );
+
+        const from_user = await User.findById(from);
+        // TODO => emit call_denied to sender of call
+
+        io.to(from_user?.socket_id).emit("audio_call_denied", {
+            from,
+            to,
+        });
+    });
+
+    // handle user_is_busy_audio_call
+    socket.on("user_is_busy_audio_call", async (data) => {
+        const { to, from } = data;
+        // find and update call record
+        await AudioCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Busy", status: "Ended", endedAt: Date.now() }
+        );
+
+        const from_user = await User.findById(from);
+        // TODO => emit on_another_audio_call to sender of call
+        io.to(from_user?.socket_id).emit("on_another_audio_call", {
+            from,
+            to,
+        });
+    });
+
+    // handle start_video_call event
+    // !--------------------- HANDLE VIDEO CALL SOCKET EVENTS ---------------------- //
+    socket.on("start_video_call", async (data) => {
+        const { from, to, roomID } = data;
+
+        console.log(data);
+
+        const to_user = await User.findById(to);
+        const from_user = await User.findById(from);
+
+        console.log("to_user", to_user);
+
+        // send notification to receiver of call
+        io.to(to_user?.socket_id).emit("video_call_notification", {
+            from: from_user,
+            roomID,
+            streamID: from,
+            userID: to,
+            userName: to,
+        });
+    });
+
+    // handle video_call_not_picked
+    socket.on("video_call_not_picked", async (data) => {
+        console.log(data);
+        // find and update call record
+        const { to, from } = data;
+
+        const to_user = await User.findById(to);
+
+        await VideoCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Missed", status: "Ended", endedAt: Date.now() }
+        );
+
+        // TODO => emit call_missed to receiver of call
+        io.to(to_user?.socket_id).emit("video_call_missed", {
+            from,
+            to,
+        });
+    });
+
+    // handle video_call_accepted
+    socket.on("video_call_accepted", async (data) => {
+        const { to, from } = data;
+
+        const from_user = await User.findById(from);
+
+        // find and update call record
+        await VideoCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Accepted" }
+        );
+
+        // TODO => emit call_accepted to sender of call
+        io.to(from_user?.socket_id).emit("video_call_accepted", {
+            from,
+            to,
+        });
+    });
+
+    // handle video_call_denied
+    socket.on("video_call_denied", async (data) => {
+        // find and update call record
+        const { to, from } = data;
+
+        await VideoCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Denied", status: "Ended", endedAt: Date.now() }
+        );
+
+        const from_user = await User.findById(from);
+        // TODO => emit call_denied to sender of call
+
+        io.to(from_user?.socket_id).emit("video_call_denied", {
+            from,
+            to,
+        });
+    });
+
+    // handle user_is_busy_video_call
+    socket.on("user_is_busy_video_call", async (data) => {
+        const { to, from } = data;
+        // find and update call record
+        await VideoCall.findOneAndUpdate(
+            {
+                participants: { $size: 2, $all: [to, from] },
+            },
+            { verdict: "Busy", status: "Ended", endedAt: Date.now() }
+        );
+
+        const from_user = await User.findById(from);
+        // TODO => emit on_another_video_call to sender of call
+        io.to(from_user?.socket_id).emit("on_another_video_call", {
+            from,
+            to,
+        });
+    });
+    // -------------- HANDLE SOCKET DISCONNECTION ----------------- //
     socket.on("end", async (data) => {
         // Find user by ID and set status as offline
         if (data.user_id) await User.findByIdAndUpdate(data.user_id, { status: "Offline" })
