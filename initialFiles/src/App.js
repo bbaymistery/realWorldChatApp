@@ -9,7 +9,8 @@ function App() {
   return (
     <ThemeProvider>
       <ThemeSettings>
-        <Router />
+        {" "}
+        <Router />{" "}
       </ThemeSettings>
     </ThemeProvider>
   );
